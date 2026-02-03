@@ -24,7 +24,6 @@
     color: white;
   }
 
-  /* Input Styling */
   .input-container {
     display: flex;
     gap: 10px;
@@ -49,7 +48,6 @@
     border: 1px solid #555;
   }
   
-  /* Buttons */
   button { 
     padding: 10px; 
     cursor: pointer; 
@@ -59,18 +57,14 @@
     transition: 0.2s;
   }
 
-  button:hover {
-    background-color: #ddd;
-  }
+  button:hover { background-color: #ddd; }
 
   .dark-mode button {
     background-color: #444;
     color: white;
     border: 1px solid #555;
   }
-  .dark-mode button:hover {
-    background-color: #555;
-  }
+  .dark-mode button:hover { background-color: #555; }
 
   #addBtn {
     height: 82px;
@@ -82,7 +76,6 @@
     justify-content: center;
   }
 
-  /* List Styling */
   #notes-list {
     margin-top: 20px;
     padding: 0;
@@ -109,7 +102,6 @@
     border-bottom: 1px solid #444;
   }
   
-  /* Delete Button */
   .delete-btn {
     position: absolute;
     top: 5px;
@@ -119,17 +111,12 @@
     color: #999;
     font-size: 16px;
     padding: 0 5px;
-    height: auto;
-    width: auto;
+    cursor: pointer;
     font-weight: bold;
   }
   
-  .delete-btn:hover {
-    color: red;
-    background: transparent;
-  }
+  .delete-btn:hover { color: red; }
 
-  /* Auth Bar */
   #authBar {
     position: fixed;
     top: 15px;
@@ -140,22 +127,10 @@
     gap: 10px;
   }
 
-  #loginBtn {
-    padding: 8px 14px;
-    height: auto;
-    font-size: 14px;
-  }
+  #loginBtn { padding: 8px 14px; font-size: 14px; }
+  #userName { font-size: 14px; opacity: 0.85; }
+  .dark-mode #userName { color: #ddd; }
 
-  #userName {
-    font-size: 14px;
-    opacity: 0.85;
-  }
-
-  .dark-mode #userName {
-    color: #ddd;
-  }
-
-  /* Footer */
   footer {
     position: fixed;
     bottom: 0;
@@ -164,20 +139,14 @@
     text-align: center;
     font-size: 14px;
     color: #666;
-    padding-bottom: 20px;
-    padding-top: 20px;
+    padding: 20px 0;
     background-color: white;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: 0.3s;
   }
 
-  .dark-mode footer {
-    background-color: #222; 
-    color: #aaa; 
-  }
+  .dark-mode footer { background-color: #222; color: #aaa; }
 
-  #mobileThemeBtn {
-    display: none;
-  }
+  #mobileThemeBtn { display: none; }
 
   @media (max-width: 600px) {
     textarea { width: 60vw; }
@@ -199,7 +168,6 @@
     <button id="addBtn">+</button>
     <button id="mobileThemeBtn">🌓</button>
   </div>
-  
   <ul id="notes-list"></ul>
 </div>
 
@@ -213,7 +181,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>  
 
 <script>
-// --- CONFIGURATION ---
 const firebaseConfig = {
     apiKey: "AIzaSyAJYwEuF27rNMANqpE49PnLoRJPJlzFGBc",
     authDomain: "notes-matteus--firebase.firebaseapp.com",
@@ -228,102 +195,80 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let currentUser = null;
-
 const input = document.getElementById("noteInput");
 const btn = document.getElementById("addBtn");
 const list = document.getElementById("notes-list");
-const mobileBtn = document.getElementById("mobileThemeBtn");
 const loginBtn = document.getElementById("loginBtn");
 const userName = document.getElementById("userName");
 
-// --- THEME ---
-if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-mode");
-}
-
-document.addEventListener("keydown", function(event) {
-    if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") return;
-    if (event.key === "m" || event.key === "M") toggleTheme();
+// Theme Logic
+if (localStorage.getItem("darkMode") === "enabled") document.body.classList.add("dark-mode");
+document.addEventListener("keydown", e => {
+    if (e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA" && (e.key === "m" || e.key === "M")) toggleTheme();
 });
-
-mobileBtn.addEventListener("click", toggleTheme);
-
+document.getElementById("mobileThemeBtn").onclick = toggleTheme;
 function toggleTheme() {
-    const body = document.body;
-    body.classList.toggle("dark-mode");
-    localStorage.setItem("darkMode", body.classList.contains("dark-mode") ? "enabled" : "disabled");
+    document.body.classList.toggle("dark-mode");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
 }
 
-// --- ADD NOTE ---
-btn.addEventListener("click", function() {
-    if (!currentUser) {
-        alert("Please log in to save notes!");
-        return;
-    }
+// 1. ADD NOTE (With Error Reporting)
+btn.addEventListener("click", () => {
+    if (!currentUser) return alert("Please log in!");
     const text = input.value;
-    if (text.trim() === "") return;
+    if (!text.trim()) return;
 
-    // We save under 'users' -> 'uid' -> 'notes' (Same structure as To-Do list)
-    db.collection("users")
-      .doc(currentUser.uid)
-      .collection("notes")
-      .add({
-          text: text,
-          time: Date.now()
-      })
-      .catch(error => {
-          console.error("Error adding note: ", error);
-          alert("Error saving. Check console.");
-      });
-
-    input.value = "";
+    db.collection("notes").add({
+        uid: currentUser.uid,
+        text: text,
+        time: Date.now()
+    })
+    .then(() => {
+        // Success
+        input.value = "";
+    })
+    .catch((error) => {
+        // THIS WILL SHOW YOU THE REAL ERROR ON SCREEN
+        alert("Firebase Error: " + error.message);
+    });
 });
 
-// --- DISPLAY NOTE ---
+// 2. RENDER NOTE
 function createItem(text, id) {
-    const newItem = document.createElement("li");
-    newItem.innerText = text;
-
-    const delBtn = document.createElement("button");
-    delBtn.innerText = "✕";
-    delBtn.className = "delete-btn";
-    delBtn.onclick = function(e) {
-        e.stopPropagation(); // Prevent clicking the note itself
-        if(confirm("Delete this note?")) {
-            db.collection("users").doc(currentUser.uid).collection("notes").doc(id).delete();
+    const li = document.createElement("li");
+    li.innerText = text;
+    const del = document.createElement("button");
+    del.innerText = "✕";
+    del.className = "delete-btn";
+    del.onclick = (e) => {
+        e.stopPropagation();
+        if(confirm("Delete note?")) {
+            db.collection("notes").doc(id).delete().catch(err => alert(err.message));
         }
     };
-
-    newItem.appendChild(delBtn);
-    list.appendChild(newItem);
+    li.appendChild(del);
+    list.appendChild(li);
 }
 
-// --- LOAD NOTES ---
+// 3. LOAD NOTES (Sorted in JS to prevent Index Errors)
 function loadNotes() {
-    list.innerHTML = "";
-    
-    // We grab the notes without 'orderBy' first to avoid Index errors
-    db.collection("users")
-      .doc(currentUser.uid)
-      .collection("notes")
+    db.collection("notes")
+      .where("uid", "==", currentUser.uid)
       .onSnapshot(snapshot => {
           list.innerHTML = "";
-          let notesArray = [];
+          let notes = [];
+          snapshot.forEach(doc => notes.push({ id: doc.id, ...doc.data() }));
           
-          snapshot.forEach(doc => {
-              notesArray.push({ id: doc.id, ...doc.data() });
-          });
-
-          // Sort by time (Newest first) in JAVASCRIPT
-          notesArray.sort((a, b) => b.time - a.time);
-
-          notesArray.forEach(note => {
-              createItem(note.text, note.id);
-          });
+          // Sort Newest First
+          notes.sort((a, b) => b.time - a.time);
+          
+          notes.forEach(n => createItem(n.text, n.id));
+      }, error => {
+          alert("Load Error: " + error.message);
       });
 }
 
-// --- LOGIN LOGIC ---
+// Auth Logic
 auth.onAuthStateChanged(user => {
     if (user) {
         currentUser = user;
@@ -338,14 +283,9 @@ auth.onAuthStateChanged(user => {
     }
 });
 
-loginBtn.addEventListener("click", () => {
-    if (currentUser) {
-        auth.signOut();
-    } else {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider);
-    }
-});
+loginBtn.onclick = () => {
+    currentUser ? auth.signOut() : auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+};
 </script>
 </body>
 </html>
