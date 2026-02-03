@@ -24,16 +24,18 @@
     color: white;
   }
 
+  /* --- INPUT AREA --- */
   .input-container {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
     align-items: flex-start;
+    justify-content: center; /* Centers input block */
   }
 
   textarea { 
     padding: 10px; 
-    width: 300px; 
+    width: 200px; /* Matches To-Do Input Width */
     height: 60px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -67,7 +69,7 @@
   .dark-mode button:hover { background-color: #555; }
 
   #addBtn {
-    height: 82px;
+    height: 82px; /* Matches textarea height + padding */
     width: 50px;
     font-size: 24px;
     font-weight: bold;
@@ -76,31 +78,29 @@
     justify-content: center;
   }
 
+  /* --- LIST AREA --- */
   #notes-list {
     margin-top: 20px;
     padding: 0;
     padding-bottom: 100px; 
     list-style: none;
-    width: 380px; 
+    width: 300px; /* Exact match to To-Do List Desktop Width */
   }
 
   li {
     background: #f4f4f4;
     border-bottom: 1px solid #ddd;
     padding: 15px;
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* Reduced to match To-Do spacing */
     border-radius: 5px;
     transition: 0.2s;
-    position: relative;
     white-space: pre-wrap;
     word-wrap: break-word;
-    cursor: pointer; /* Shows hand icon */
-    user-select: none; /* Prevents highlighting text when clicking */
+    cursor: pointer;
+    user-select: none;
   }
 
-  li:hover {
-    background-color: #e0e0e0;
-  }
+  li:hover { background-color: #e0e0e0; }
 
   .dark-mode li {
     background-color: #333;
@@ -108,11 +108,9 @@
     border-bottom: 1px solid #444;
   }
   
-  .dark-mode li:hover {
-    background-color: #444;
-  }
+  .dark-mode li:hover { background-color: #444; }
 
-  /* ANIMATIONS (Copied from To-Do List) */
+  /* --- ANIMATIONS --- */
   .done {
     text-decoration: line-through;
     color: gray;
@@ -125,6 +123,7 @@
     transition: all 0.5s ease;
   }
 
+  /* --- AUTH BAR --- */
   #authBar {
     position: fixed;
     top: 15px;
@@ -133,12 +132,27 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    max-width: calc(100vw - 30px);
   }
 
-  #loginBtn { padding: 8px 14px; font-size: 14px; }
-  #userName { font-size: 14px; opacity: 0.85; }
+  #loginBtn { 
+    padding: 8px 14px; 
+    font-size: 14px; 
+    border-radius: 6px;
+  }
+  
+  #userName { 
+    font-size: 14px; 
+    opacity: 0.85; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+  }
+  
   .dark-mode #userName { color: #ddd; }
 
+  /* --- FOOTER --- */
   footer {
     position: fixed;
     bottom: 0;
@@ -154,12 +168,51 @@
 
   .dark-mode footer { background-color: #222; color: #aaa; }
 
-  #mobileThemeBtn { display: none; }
+  #mobileThemeBtn { display: none; margin-left: 5px;}
 
-  @media (max-width: 600px) {
-    textarea { width: 60vw; }
-    #notes-list { width: 90vw; }
-    #mobileThemeBtn { display: inline-block; margin-left: 10px; height: auto;}
+  /* --- MOBILE BREAKPOINT (Exactly 768px like To-Do) --- */
+  @media (max-width: 768px) {
+    #notes-list {
+      width: 90vw; /* Exact match */
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    textarea {
+      width: 50%; /* Exact match */
+    }
+
+    #mobileThemeBtn {
+      display: inline-block;
+      height: 82px; /* Match height of add button */
+    }
+
+    /* Hide footer text on mobile */
+    footer p {
+      display: none;
+    }
+    
+    footer {
+      font-size: 12px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    /* Adjust Auth Bar for mobile */
+    #authBar {
+      top: 10px;
+      right: 10px;
+    }
+    
+    #userName {
+        max-width: 110px;
+        font-size: 13px;
+    }
+
+    #loginBtn {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
   }
 </style>
 </head>
@@ -222,7 +275,7 @@ function toggleTheme() {
 
 // 1. ADD NOTE
 btn.addEventListener("click", () => {
-    if (!currentUser) return alert("Please log in!");
+    if (!currentUser) return alert("Please log in.");
     const text = input.value;
     if (!text.trim()) return;
 
