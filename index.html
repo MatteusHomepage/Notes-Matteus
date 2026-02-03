@@ -24,18 +24,17 @@
     color: white;
   }
 
-  /* --- INPUT AREA --- */
   .input-container {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
     align-items: flex-start;
-    justify-content: center; /* Centers input block */
+    justify-content: center; 
   }
 
   textarea { 
     padding: 10px; 
-    width: 200px; /* Matches To-Do Input Width */
+    width: 200px; 
     height: 60px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -69,7 +68,7 @@
   .dark-mode button:hover { background-color: #555; }
 
   #addBtn {
-    height: 82px; /* Matches textarea height + padding */
+    height: 82px;
     width: 50px;
     font-size: 24px;
     font-weight: bold;
@@ -78,20 +77,21 @@
     justify-content: center;
   }
 
-  /* --- LIST AREA --- */
+  
+  
   #notes-list {
     margin-top: 20px;
     padding: 0;
     padding-bottom: 100px; 
     list-style: none;
-    width: 300px; /* Exact match to To-Do List Desktop Width */
+    width: 300px; 
   }
 
   li {
     background: #f4f4f4;
     border-bottom: 1px solid #ddd;
     padding: 15px;
-    margin-bottom: 5px; /* Reduced to match To-Do spacing */
+    margin-bottom: 5px; 
     border-radius: 5px;
     transition: 0.2s;
     white-space: pre-wrap;
@@ -110,7 +110,8 @@
   
   .dark-mode li:hover { background-color: #444; }
 
-  /* --- ANIMATIONS --- */
+
+  
   .done {
     text-decoration: line-through;
     color: gray;
@@ -123,7 +124,7 @@
     transition: all 0.5s ease;
   }
 
-  /* --- AUTH BAR --- */
+  
   #authBar {
     position: fixed;
     top: 15px;
@@ -152,7 +153,7 @@
   
   .dark-mode #userName { color: #ddd; }
 
-  /* --- FOOTER --- */
+  
   footer {
     position: fixed;
     bottom: 0;
@@ -170,24 +171,24 @@
 
   #mobileThemeBtn { display: none; margin-left: 5px;}
 
-  /* --- MOBILE BREAKPOINT (Exactly 768px like To-Do) --- */
+
   @media (max-width: 768px) {
     #notes-list {
-      width: 90vw; /* Exact match */
+      width: 90vw; 
       margin-left: auto;
       margin-right: auto;
     }
 
     textarea {
-      width: 50%; /* Exact match */
+      width: 50%; 
     }
 
     #mobileThemeBtn {
       display: inline-block;
-      height: 82px; /* Match height of add button */
+      height: 82px; 
     }
 
-    /* Hide footer text on mobile */
+   
     footer p {
       display: none;
     }
@@ -198,7 +199,7 @@
       padding-bottom: 10px;
     }
 
-    /* Adjust Auth Bar for mobile */
+   
     #authBar {
       top: 10px;
       right: 10px;
@@ -262,7 +263,6 @@ const list = document.getElementById("notes-list");
 const loginBtn = document.getElementById("loginBtn");
 const userName = document.getElementById("userName");
 
-// Theme Logic
 if (localStorage.getItem("darkMode") === "enabled") document.body.classList.add("dark-mode");
 document.addEventListener("keydown", e => {
     if (e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA" && (e.key === "m" || e.key === "M")) toggleTheme();
@@ -273,7 +273,6 @@ function toggleTheme() {
     localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
 }
 
-// 1. ADD NOTE
 btn.addEventListener("click", () => {
     if (!currentUser) return alert("Please log in.");
     const text = input.value;
@@ -288,22 +287,17 @@ btn.addEventListener("click", () => {
     .catch(err => alert("Error: " + err.message));
 });
 
-// 2. RENDER NOTE (With Animation & Click-to-Delete)
 function createItem(text, id) {
     const newItem = document.createElement("li");
     newItem.innerText = text;
 
-    // Click anywhere on the note to animate and delete
     newItem.addEventListener("click", function() {
-        // 1. Add strikethrough style
         newItem.classList.add("done");
         
-        // 2. Wait 0.2s, then slide away
         setTimeout(() => {
             newItem.classList.add("fall-away");
         }, 200);
 
-        // 3. Wait 0.7s total, then delete from database
         setTimeout(() => {
             db.collection("notes").doc(id).delete().catch(err => console.error(err));
         }, 700);
@@ -312,7 +306,6 @@ function createItem(text, id) {
     list.appendChild(newItem);
 }
 
-// 3. LOAD NOTES (Sorted in JS)
 function loadNotes() {
     db.collection("notes")
       .where("uid", "==", currentUser.uid)
@@ -321,7 +314,6 @@ function loadNotes() {
           let notes = [];
           snapshot.forEach(doc => notes.push({ id: doc.id, ...doc.data() }));
           
-          // Sort Newest First
           notes.sort((a, b) => b.time - a.time);
           
           notes.forEach(n => createItem(n.text, n.id));
@@ -330,7 +322,6 @@ function loadNotes() {
       });
 }
 
-// Auth Logic
 auth.onAuthStateChanged(user => {
     if (user) {
         currentUser = user;
