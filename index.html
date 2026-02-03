@@ -1,296 +1,356 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Notes</title>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notes</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗒️</text></svg>">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ffffff">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23f4f4f4'/%3E%3Crect x='20' y='25' width='60' height='6' fill='%23666'/%3E%3Crect x='20' y='40' width='60' height='6' fill='%23666'/%3E%3Crect x='20' y='55' width='40' height='6' fill='%23666'/%3E%3C/svg%3E">
+
+
+  
 <style>
-body{
-margin:0;
-font-family:sans-serif;
-transition:.3s;
-background:#f5f5f5;
-color:#000
-}
-.dark-mode{
-background:#222;
-color:#fff
-}
-header{
-padding:15px;
-text-align:center;
-font-size:22px
-}
-.notes-grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-gap:15px;
-padding:15px;
-max-width:900px;
-margin:auto
-}
-.note{
-background:#fff;
-padding:15px;
-border-radius:8px;
-cursor:pointer;
-min-height:100px;
-word-wrap:break-word
-}
-.dark-mode .note{
-background:#333
-}
-.add-btn{
-position:fixed;
-bottom:80px;
-right:20px;
-width:60px;
-height:60px;
-border-radius:50%;
-font-size:32px;
-border:none;
-background:#eee;
-cursor:pointer
-}
-.dark-mode .add-btn{
-background:#444;
-color:#fff
-}
-.editor{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#fff;
-display:none;
-flex-direction:column
-}
-.dark-mode .editor{
-background:#222
-}
-textarea{
-flex:1;
-border:none;
-padding:15px;
-font-size:16px;
-resize:none;
-outline:none;
-background:transparent;
-color:inherit
-}
-.editor button{
-padding:15px;
-border:none;
-background:#eee;
-cursor:pointer
-}
-.dark-mode .editor button{
-background:#444;
-color:#fff
-}
-footer{
-position:fixed;
-bottom:0;
-width:100%;
-text-align:center;
-padding:15px;
-background:#fff;
-transition:.3s
-}
-.dark-mode footer{
-background:#222
-}
-.footer-links{
-display:flex;
-justify-content:center;
-gap:10px
-}
-.footer-links button{
-border:1px solid #ccc;
-background:#eee;
-padding:5px 10px;
-border-radius:4px;
-cursor:pointer;
-font-size:12px
-}
-.dark-mode .footer-links button{
-background:#444;
-color:#fff;
-border-color:#555
-}
-#mobileThemeBtn{
-display:none
-}
-@media(max-width:600px){
-#mobileThemeBtn{display:inline-block}
-}
+  body { 
+    font-family: sans-serif; 
+    display: flex; 
+    justify-content: center; 
+    padding-top: 50px; 
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin: 0;
+    min-height: 100vh;
+    background-color: white;
+    color: black;
+  }
+  
+  .dark-mode {
+    background-color: #222;
+    color: white;
+  }
+
+  .input-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+    justify-content: center; 
+  }
+
+  textarea { 
+    padding: 10px; 
+    width: 200px; 
+    height: 60px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none; 
+    resize: vertical;
+    font-family: sans-serif;
+  }
+
+  .dark-mode textarea {
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+  }
+  
+  button { 
+    padding: 10px; 
+    cursor: pointer; 
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #eee;
+    transition: 0.2s;
+  }
+
+  button:hover { background-color: #ddd; }
+
+  .dark-mode button {
+    background-color: #444;
+    color: white;
+    border: 1px solid #555;
+  }
+  .dark-mode button:hover { background-color: #555; }
+
+  #addBtn {
+    height: 82px;
+    width: 50px;
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  
+  
+  #notes-list {
+    margin-top: 20px;
+    padding: 0;
+    padding-bottom: 100px; 
+    list-style: none;
+    width: 300px; 
+  }
+
+  li {
+    background: #f4f4f4;
+    border-bottom: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 5px; 
+    border-radius: 5px;
+    transition: 0.2s;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  li:hover { background-color: #e0e0e0; }
+
+  .dark-mode li {
+    background-color: #333;
+    color: white;
+    border-bottom: 1px solid #444;
+  }
+  
+  .dark-mode li:hover { background-color: #444; }
+
+
+  
+  .done {
+    text-decoration: line-through;
+    color: gray;
+    opacity: 0.6;
+  }
+
+  .fall-away {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.5s ease;
+  }
+
+  
+  #authBar {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: calc(100vw - 30px);
+  }
+
+  #loginBtn { 
+    padding: 8px 14px; 
+    font-size: 14px; 
+    border-radius: 6px;
+  }
+  
+  #userName { 
+    font-size: 14px; 
+    opacity: 0.85; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+  }
+  
+  .dark-mode #userName { color: #ddd; }
+
+  
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    padding: 20px 0;
+    background-color: white;
+    transition: 0.3s;
+  }
+
+  .dark-mode footer { background-color: #222; color: #aaa; }
+
+  #mobileThemeBtn { display: none; margin-left: 5px;}
+
+
+  @media (max-width: 768px) {
+    #notes-list {
+      width: 90vw; 
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    textarea {
+      width: 50%; 
+    }
+
+    #mobileThemeBtn {
+      display: inline-block;
+      height: 82px; 
+    }
+
+   
+    footer p {
+      display: none;
+    }
+    
+    footer {
+      font-size: 12px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+   
+    #authBar {
+      top: 10px;
+      right: 10px;
+    }
+    
+    #userName {
+        max-width: 110px;
+        font-size: 13px;
+    }
+
+    #loginBtn {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+  }
 </style>
 </head>
 <body>
 
-<header>Notes</header>
-
-<div id="login" style="text-align:center;padding-top:50px">
-<button id="googleBtn">Sign in with Google</button>
+<div id="authBar">
+  <span id="userName"></span>
+  <button id="loginBtn">Log in</button>
 </div>
 
-<div id="app" style="display:none">
-<div class="notes-grid" id="notes"></div>
-<button class="add-btn" id="addBtn">+</button>
-</div>
-
-<div class="editor" id="editor">
-<textarea id="editorText"></textarea>
-<button id="saveBtn">Save</button>
+<div>
+  <div class="input-container">
+    <textarea id="noteInput" placeholder="Write a note..."></textarea>
+    <button id="addBtn">+</button>
+    <button id="mobileThemeBtn">🌓</button>
+  </div>
+  <ul id="notes-list"></ul>
 </div>
 
 <footer>
-<div class="footer-links">
-<button id="logoutBtn">Logout</button>
-<button id="mobileThemeBtn">🌓</button>
-</div>
+  <p>Created by Matteus Aydin 2026</p>
+  <p style="font-size: 12px; opacity: 0.8; margin-top: 5px;">Press 'M' to toggle theme</p>
 </footer>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js"
-import { getAuth, GoogleAuthProvider, signInWithRedirect, signOut, onAuthStateChanged, getRedirectResult } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js"
-import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js"
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>  
 
-const firebaseConfig={
-apiKey:"AIzaSyAJYwEuF27rNMANqpE49PnLoRJPJlzFGBc",
-authDomain:"notes-matteus--firebase.firebaseapp.com",
-projectId:"notes-matteus--firebase",
-storageBucket:"notes-matteus--firebase.firebasestorage.app",
-messagingSenderId:"601405793462",
-appId:"1:601405793462:web:39d554bd7e7fb0e41df217"
-}
 
-const app=initializeApp(firebaseConfig)
-const auth=getAuth(app)
-const db=getFirestore(app)
-const provider=new GoogleAuthProvider()
 
-const loginDiv=document.getElementById("login")
-const appDiv=document.getElementById("app")
-const notesDiv=document.getElementById("notes")
-const editor=document.getElementById("editor")
-const editorText=document.getElementById("editorText")
-
-let currentNote=null
-
-document.getElementById("googleBtn").onclick=()=>signInWithRedirect(auth,provider)
-document.getElementById("logoutBtn").onclick=()=>signOut(auth)
-document.getElementById("addBtn").onclick=()=>{
-currentNote=null
-editorText.value=""
-editor.style.display="flex"
-}
-document.getElementById("saveBtn").onclick=saveNote
-
-getRedirectResult(auth)
-
-onAuthStateChanged(auth,u=>{
-if(u){
-loginDiv.style.display="none"
-appDiv.style.display="block"
-loadNotes(u.uid)
-}else{
-loginDiv.style.display="block"
-appDiv.style.display="none"
-}
-})
-
-function loadNotes(uid){
-const q=query(
-collection(db,"notes"),
-where("uid","==",uid),
-orderBy("time","desc")
-)
-onSnapshot(q,s=>{
-notesDiv.innerHTML=""
-s.forEach(d=>{
-const n=document.createElement("div")
-n.className="note"
-n.innerText=d.data().text
-n.onclick=()=>{
-currentNote=d.id
-editorText.value=d.data().text
-editor.style.display="flex"
-}
-notesDiv.appendChild(n)
-})
-})
-}
-
-async function saveNote(){
-if(editorText.value===""){editor.style.display="none";return}
-if(currentNote){
-await updateDoc(doc(db,"notes",currentNote),{
-text:editorText.value,
-time:Date.now()
-})
-}else{
-await addDoc(collection(db,"notes"),{
-uid:auth.currentUser.uid,
-text:editorText.value,
-time:Date.now()
-})
-}
-editor.style.display="none"
-}
-
-if(localStorage.getItem("darkMode")==="enabled"){
-document.body.classList.add("dark-mode")
-}
-
-document.addEventListener("keydown",e=>{
-if(e.key==="m"||e.key==="M")toggleTheme()
-})
-
-document.getElementById("mobileThemeBtn").onclick=toggleTheme
-
-function toggleTheme(){
-document.body.classList.toggle("dark-mode")
-localStorage.setItem("darkMode",document.body.classList.contains("dark-mode")?"enabled":"disabled")
-}
-
-const manifest={
-name:"Notes",
-short_name:"Notes",
-start_url:".",
-display:"standalone",
-background_color:"#ffffff",
-theme_color:"#ffffff",
-icons:[{
-src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f4f4f4'/><rect x='20' y='25' width='60' height='6' fill='%23666'/><rect x='20' y='40' width='60' height='6' fill='%23666'/><rect x='20' y='55' width='40' height='6' fill='%23666'/></svg>",
-sizes:"192x192",
-type:"image/svg+xml"
-}]
-}
-
-const manifestBlob=new Blob([JSON.stringify(manifest)],{type:"application/json"})
-const manifestURL=URL.createObjectURL(manifestBlob)
-const link=document.createElement("link")
-link.rel="manifest"
-link.href=manifestURL
-document.head.appendChild(link)
-
+<script>
 if("serviceWorker"in navigator){
-const swCode=`
-self.addEventListener('install',e=>{
-e.waitUntil(caches.open('notes').then(c=>c.addAll(['./'])))
-})
-self.addEventListener('fetch',e=>{
-e.respondWith(
-caches.match(e.request).then(r=>r||fetch(e.request))
-)
-})
-`
-const swBlob=new Blob([swCode],{type:"text/javascript"})
-navigator.serviceWorker.register(URL.createObjectURL(swBlob))
+  navigator.serviceWorker.register("sw.js")
 }
+</script>
+  
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAJYwEuF27rNMANqpE49PnLoRJPJlzFGBc",
+    authDomain: "notes-matteus--firebase.firebaseapp.com",
+    projectId: "notes-matteus--firebase",
+    storageBucket: "notes-matteus--firebase.firebasestorage.app",
+    messagingSenderId: "601405793462",
+    appId: "1:601405793462:web:39d554bd7e7fb0e41df217"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser = null;
+const input = document.getElementById("noteInput");
+const btn = document.getElementById("addBtn");
+const list = document.getElementById("notes-list");
+const loginBtn = document.getElementById("loginBtn");
+const userName = document.getElementById("userName");
+
+if (localStorage.getItem("darkMode") === "enabled") document.body.classList.add("dark-mode");
+document.addEventListener("keydown", e => {
+    if (e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA" && (e.key === "m" || e.key === "M")) toggleTheme();
+});
+document.getElementById("mobileThemeBtn").onclick = toggleTheme;
+function toggleTheme() {
+    document.body.classList.toggle("dark-mode");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
+}
+
+btn.addEventListener("click", () => {
+    if (!currentUser) return alert("Please log in.");
+    const text = input.value;
+    if (!text.trim()) return;
+
+    db.collection("notes").add({
+        uid: currentUser.uid,
+        text: text,
+        time: Date.now()
+    })
+    .then(() => input.value = "")
+    .catch(err => alert("Error: " + err.message));
+});
+
+function createItem(text, id) {
+    const newItem = document.createElement("li");
+    newItem.innerText = text;
+
+    newItem.addEventListener("click", function() {
+        newItem.classList.add("done");
+        
+        setTimeout(() => {
+            newItem.classList.add("fall-away");
+        }, 200);
+
+        setTimeout(() => {
+            db.collection("notes").doc(id).delete().catch(err => console.error(err));
+        }, 700);
+    });
+
+    list.appendChild(newItem);
+}
+
+function loadNotes() {
+    db.collection("notes")
+      .where("uid", "==", currentUser.uid)
+      .onSnapshot(snapshot => {
+          list.innerHTML = "";
+          let notes = [];
+          snapshot.forEach(doc => notes.push({ id: doc.id, ...doc.data() }));
+          
+          notes.sort((a, b) => b.time - a.time);
+          
+          notes.forEach(n => createItem(n.text, n.id));
+      }, error => {
+          alert("Load Error: " + error.message);
+      });
+}
+
+auth.onAuthStateChanged(user => {
+    if (user) {
+        currentUser = user;
+        userName.innerText = user.displayName;
+        loginBtn.innerText = "Log out";
+        loadNotes();
+    } else {
+        currentUser = null;
+        userName.innerText = "";
+        list.innerHTML = "";
+        loginBtn.innerText = "Log in";
+    }
+});
+
+loginBtn.onclick = () => {
+    currentUser ? auth.signOut() : auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+};
 </script>
 </body>
 </html>
