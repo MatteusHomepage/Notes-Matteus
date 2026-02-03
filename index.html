@@ -94,6 +94,12 @@
     position: relative;
     white-space: pre-wrap;
     word-wrap: break-word;
+    cursor: pointer; /* Shows hand icon */
+    user-select: none; /* Prevents highlighting text when clicking */
+  }
+
+  li:hover {
+    background-color: #e0e0e0;
   }
 
   .dark-mode li {
@@ -102,20 +108,22 @@
     border-bottom: 1px solid #444;
   }
   
-  .delete-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: transparent;
-    border: none;
-    color: #999;
-    font-size: 16px;
-    padding: 0 5px;
-    cursor: pointer;
-    font-weight: bold;
+  .dark-mode li:hover {
+    background-color: #444;
   }
-  
-  .delete-btn:hover { color: red; }
+
+  /* ANIMATIONS (Copied from To-Do List) */
+  .done {
+    text-decoration: line-through;
+    color: gray;
+    opacity: 0.6;
+  }
+
+  .fall-away {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.5s ease;
+  }
 
   #authBar {
     position: fixed;
@@ -212,7 +220,7 @@ function toggleTheme() {
     localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
 }
 
-// 1. ADD NOTE (With Error Reporting)
+// 1. ADD NOTE
 btn.addEventListener("click", () => {
     if (!currentUser) return alert("Please log in!");
     const text = input.value;
@@ -223,34 +231,35 @@ btn.addEventListener("click", () => {
         text: text,
         time: Date.now()
     })
-    .then(() => {
-        // Success
-        input.value = "";
-    })
-    .catch((error) => {
-        // THIS WILL SHOW YOU THE REAL ERROR ON SCREEN
-        alert("Firebase Error: " + error.message);
-    });
+    .then(() => input.value = "")
+    .catch(err => alert("Error: " + err.message));
 });
 
-// 2. RENDER NOTE
+// 2. RENDER NOTE (With Animation & Click-to-Delete)
 function createItem(text, id) {
-    const li = document.createElement("li");
-    li.innerText = text;
-    const del = document.createElement("button");
-    del.innerText = "✕";
-    del.className = "delete-btn";
-    del.onclick = (e) => {
-        e.stopPropagation();
-        if(confirm("Delete note?")) {
-            db.collection("notes").doc(id).delete().catch(err => alert(err.message));
-        }
-    };
-    li.appendChild(del);
-    list.appendChild(li);
+    const newItem = document.createElement("li");
+    newItem.innerText = text;
+
+    // Click anywhere on the note to animate and delete
+    newItem.addEventListener("click", function() {
+        // 1. Add strikethrough style
+        newItem.classList.add("done");
+        
+        // 2. Wait 0.2s, then slide away
+        setTimeout(() => {
+            newItem.classList.add("fall-away");
+        }, 200);
+
+        // 3. Wait 0.7s total, then delete from database
+        setTimeout(() => {
+            db.collection("notes").doc(id).delete().catch(err => console.error(err));
+        }, 700);
+    });
+
+    list.appendChild(newItem);
 }
 
-// 3. LOAD NOTES (Sorted in JS to prevent Index Errors)
+// 3. LOAD NOTES (Sorted in JS)
 function loadNotes() {
     db.collection("notes")
       .where("uid", "==", currentUser.uid)
