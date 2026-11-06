@@ -9,70 +9,73 @@
 <meta name="google-site-verification" content="o0odX19KzQ29Id3e3SSXmlBCz7bFFEo5cqlWI9CvjJk" />
 <meta name="theme-color" content="#ffffff">
 
-
-  
 <style>
-  body { 
-    font-family: sans-serif; 
-    display: flex; 
-    justify-content: center; 
-    padding-top: 50px; 
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    padding-top: 50px;
     transition: background-color 0.3s ease, color 0.3s ease;
     margin: 0;
     min-height: 100vh;
     background-color: white;
     color: black;
-  }
-  
-  .dark-mode {
+}
+
+.dark-mode {
     background-color: #222;
     color: white;
-  }
+}
 
-  .input-container {
+.input-container {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
     align-items: flex-start;
-    justify-content: center; 
-  }
+    justify-content: center;
+}
 
-  textarea { 
-    padding: 10px; 
-    width: 200px; 
+textarea {
+    padding: 10px;
+    width: 200px;
     height: 60px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    outline: none; 
+    outline: none;
     resize: vertical;
     font-family: sans-serif;
-  }
+}
 
-  .dark-mode textarea {
+.dark-mode textarea {
     background-color: #333;
     color: white;
     border: 1px solid #555;
-  }
-  
-  button { 
-    padding: 10px; 
-    cursor: pointer; 
+}
+
+button {
+    padding: 10px;
+    cursor: pointer;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #eee;
     transition: 0.2s;
-  }
+}
 
-  button:hover { background-color: #ddd; }
+button:hover {
+    background-color: #ddd;
+}
 
-  .dark-mode button {
+.dark-mode button {
     background-color: #444;
     color: white;
     border: 1px solid #555;
-  }
-  .dark-mode button:hover { background-color: #555; }
+}
 
-  #addBtn {
+.dark-mode button:hover {
+    background-color: #555;
+}
+
+#addBtn {
     height: 82px;
     width: 50px;
     font-size: 24px;
@@ -80,57 +83,56 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+}
 
-  
-  
-  #notes-list {
+#notes-list {
     margin-top: 20px;
     padding: 0;
-    padding-bottom: 100px; 
+    padding-bottom: 100px;
     list-style: none;
-    width: 300px; 
-  }
+    width: 300px;
+}
 
-  li {
+li {
     background: #f4f4f4;
     border-bottom: 1px solid #ddd;
     padding: 15px;
-    margin-bottom: 5px; 
+    margin-bottom: 5px;
     border-radius: 5px;
     transition: 0.2s;
     white-space: pre-wrap;
     word-wrap: break-word;
     cursor: pointer;
     user-select: none;
-  }
+}
 
-  li:hover { background-color: #e0e0e0; }
+li:hover {
+    background-color: #e0e0e0;
+}
 
-  .dark-mode li {
+.dark-mode li {
     background-color: #333;
     color: white;
     border-bottom: 1px solid #444;
-  }
-  
-  .dark-mode li:hover { background-color: #444; }
+}
 
+.dark-mode li:hover {
+    background-color: #444;
+}
 
-  
-  .done {
+.done {
     text-decoration: line-through;
     color: gray;
     opacity: 0.6;
-  }
+}
 
-  .fall-away {
+.fall-away {
     opacity: 0;
     transform: translateX(50px);
     transition: all 0.5s ease;
-  }
+}
 
-  
-  #authBar {
+#authBar {
     position: fixed;
     top: 15px;
     right: 15px;
@@ -139,33 +141,34 @@
     align-items: center;
     gap: 10px;
     max-width: calc(100vw - 30px);
-  }
+}
 
-  #loginBtn { 
-    padding: 8px 14px; 
-    font-size: 14px; 
+#loginBtn {
+    padding: 8px 14px;
+    font-size: 14px;
     border-radius: 6px;
-  }
+}
 
-    #hubBtn { 
-    padding: 8px 14px; 
-    font-size: 14px; 
+#hubBtn {
+    padding: 8px 14px;
+    font-size: 14px;
     border-radius: 6px;
-  }
-  
-  #userName { 
-    font-size: 14px; 
-    opacity: 0.85; 
+}
+
+#userName {
+    font-size: 14px;
+    opacity: 0.85;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 160px;
-  }
-  
-  .dark-mode #userName { color: #ddd; }
+}
 
-  
-  footer {
+.dark-mode #userName {
+    color: #ddd;
+}
+
+footer {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -176,46 +179,151 @@
     padding: 20px 0;
     background-color: white;
     transition: 0.3s;
-  }
+}
 
-  .dark-mode footer { background-color: #222; color: #aaa; }
+.dark-mode footer {
+    background-color: #222;
+    color: #aaa;
+}
 
-  #mobileThemeBtn { display: none; margin-left: 5px;}
+#mobileThemeBtn {
+    display: none;
+    margin-left: 5px;
+}
 
+#loginModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.55);
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
 
-  @media (max-width: 768px) {
+#loginModal.visible {
+    display: flex;
+}
+
+#loginBox {
+    width: 100%;
+    max-width: 340px;
+    box-sizing: border-box;
+    background: white;
+    color: #222;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode #loginBox {
+    background: #2b2b2b;
+    color: white;
+}
+
+#loginBox h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+#loginDescription {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.dark-mode #loginDescription {
+    color: #bbb;
+}
+
+#loginBox input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    outline: none;
+}
+
+.dark-mode #loginBox input {
+    background: #383838;
+    color: white;
+    border-color: #555;
+}
+
+#loginSubmit {
+    width: 100%;
+    padding: 12px;
+    background: #222;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    margin-top: 5px;
+}
+
+#loginSubmit:hover {
+    background: #444;
+}
+
+.dark-mode #loginSubmit {
+    background: #eee;
+    color: #222;
+}
+
+#loginCancel {
+    width: 100%;
+    margin-top: 10px;
+}
+
+#loginStatus {
+    font-size: 13px;
+    text-align: center;
+    margin-top: 12px;
+    color: #c0392b;
+    overflow-wrap: break-word;
+}
+
+#loginStatus:empty {
+    display: none;
+}
+
+@media (max-width: 768px) {
     #notes-list {
-      width: 90vw; 
-      margin-left: auto;
-      margin-right: auto;
+        width: 90vw;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     textarea {
-      width: 50%; 
+        width: 50%;
     }
 
     #mobileThemeBtn {
-      display: inline-block;
-      height: 82px; 
+        display: inline-block;
+        height: 82px;
     }
 
-   
     footer p {
-      display: none;
-    }
-    
-    footer {
-      font-size: 12px;
-      padding-top: 10px;
-      padding-bottom: 10px;
+        display: none;
     }
 
-   
-    #authBar {
-      top: 10px;
-      right: 10px;
+    footer {
+        font-size: 12px;
+        padding-top: 10px;
+        padding-bottom: 10px;
     }
-    
+
+    #authBar {
+        top: 10px;
+        right: 10px;
+    }
+
     #userName {
         max-width: 110px;
         font-size: 13px;
@@ -225,76 +333,252 @@
         padding: 6px 10px;
         font-size: 13px;
     }
-     #hubBtn {
+
+    #hubBtn {
         padding: 6px 10px;
         font-size: 13px;
     }
-  }
+}
 </style>
 </head>
+
 <body>
 
 <div id="authBar">
-  <span id="userName"></span>
-  <button id="loginBtn">Log in</button>
-   <button id="hubBtn" onclick="window.location.href='https://matteushomepage.github.io/Website-Hub'" >To Hub</button>
+    <span id="userName"></span>
+    <button id="loginBtn">Log in</button>
+    <button id="hubBtn" onclick="window.location.href='https://matteushomepage.github.io/Website-Hub'">To Hub</button>
 </div>
 
 <div>
-  <div class="input-container">
-    <textarea id="noteInput" placeholder="Write a note..."></textarea>
-    <button id="addBtn">+</button>
-    <button id="mobileThemeBtn">🌓</button>
-  </div>
-  <ul id="notes-list"></ul>
+    <div class="input-container">
+        <textarea id="noteInput" placeholder="Write a note..."></textarea>
+        <button id="addBtn">+</button>
+        <button id="mobileThemeBtn">🌓</button>
+    </div>
+
+    <ul id="notes-list"></ul>
 </div>
 
 <footer>
-  <p>Created by Matteus Aydin 2026</p>
-  <p style="font-size: 12px; opacity: 0.8; margin-top: 5px;">Press 'M' to toggle theme</p>
+    <p>Created by Matteus Aydin 2026</p>
+    <p style="font-size: 12px; opacity: 0.8; margin-top: 5px;">Press 'M' to toggle theme</p>
 </footer>
+
+<div id="loginModal">
+    <div id="loginBox">
+        <h2>Log in</h2>
+
+        <p id="loginDescription">
+            Enter your email and password to continue.
+        </p>
+
+        <form id="loginForm">
+            <input
+                type="email"
+                id="emailInput"
+                placeholder="Email address"
+                autocomplete="email"
+                required
+            >
+
+            <input
+                type="password"
+                id="passwordInput"
+                placeholder="Password"
+                autocomplete="current-password"
+                minlength="6"
+                required
+            >
+
+            <button type="submit" id="loginSubmit">
+                Log in / Create account
+            </button>
+        </form>
+
+        <button id="loginCancel" type="button">Cancel</button>
+
+        <div id="loginStatus"></div>
+    </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>  
-
-
-
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
+
 const firebaseConfig = {
-    apiKey: "AIzaSyAJYwEuF27rNMANqpE49PnLoRJPJlzFGBc",
-    authDomain: "notes-matteus--firebase.firebaseapp.com",
-    projectId: "notes-matteus--firebase",
-    storageBucket: "notes-matteus--firebase.firebasestorage.app",
-    messagingSenderId: "601405793462",
-    appId: "1:601405793462:web:39d554bd7e7fb0e41df217"
+    apiKey: "AIzaSyCnzFHFx-LkADAuUK42s7Y58sn24AVCT0w",
+    authDomain: "notes-matteus.firebaseapp.com",
+    projectId: "notes-matteus",
+    storageBucket: "notes-matteus.firebasestorage.app",
+    messagingSenderId: "407855896537",
+    appId: "1:407855896537:web:5b09180460472989096bc8"
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 let currentUser = null;
+let notesListener = null;
+
 const input = document.getElementById("noteInput");
 const btn = document.getElementById("addBtn");
 const list = document.getElementById("notes-list");
+
 const loginBtn = document.getElementById("loginBtn");
 const userName = document.getElementById("userName");
 
-if (localStorage.getItem("darkMode") === "enabled") document.body.classList.add("dark-mode");
-document.addEventListener("keydown", e => {
-    if (e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA" && (e.key === "m" || e.key === "M")) toggleTheme();
-});
-document.getElementById("mobileThemeBtn").onclick = toggleTheme;
-function toggleTheme() {
-    document.body.classList.toggle("dark-mode");
-    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
+const loginModal = document.getElementById("loginModal");
+const loginForm = document.getElementById("loginForm");
+const emailInput = document.getElementById("emailInput");
+const passwordInput = document.getElementById("passwordInput");
+const loginSubmit = document.getElementById("loginSubmit");
+const loginCancel = document.getElementById("loginCancel");
+const loginStatus = document.getElementById("loginStatus");
+
+if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-mode");
 }
 
+document.addEventListener("keydown", e => {
+    if (
+        e.target.tagName !== "INPUT" &&
+        e.target.tagName !== "TEXTAREA" &&
+        (e.key === "m" || e.key === "M")
+    ) {
+        toggleTheme();
+    }
+});
+
+document.getElementById("mobileThemeBtn").onclick = toggleTheme;
+
+function toggleTheme() {
+    document.body.classList.toggle("dark-mode");
+
+    localStorage.setItem(
+        "darkMode",
+        document.body.classList.contains("dark-mode")
+            ? "enabled"
+            : "disabled"
+    );
+}
+
+function openLoginModal() {
+    loginStatus.textContent = "";
+    loginModal.classList.add("visible");
+    emailInput.focus();
+}
+
+function closeLoginModal() {
+    loginModal.classList.remove("visible");
+    loginStatus.textContent = "";
+    loginForm.reset();
+}
+
+loginBtn.onclick = () => {
+    if (currentUser) {
+        auth.signOut().catch(err => {
+            alert("Logout Error: " + err.message);
+        });
+    } else {
+        openLoginModal();
+    }
+};
+
+loginCancel.onclick = closeLoginModal;
+
+loginModal.addEventListener("click", e => {
+    if (e.target === loginModal) {
+        closeLoginModal();
+    }
+});
+
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && loginModal.classList.contains("visible")) {
+        closeLoginModal();
+    }
+});
+
+loginForm.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!email || !password) {
+        loginStatus.textContent = "Please enter your email and password.";
+        return;
+    }
+
+    loginSubmit.disabled = true;
+    loginSubmit.textContent = "Please wait...";
+    loginStatus.textContent = "";
+
+    try {
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+
+            closeLoginModal();
+
+        } catch (error) {
+
+            if (
+                error.code === "auth/user-not-found" ||
+                error.code === "auth/invalid-credential"
+            ) {
+                try {
+                    await auth.createUserWithEmailAndPassword(email, password);
+
+                    closeLoginModal();
+
+                } catch (createError) {
+
+                    if (createError.code === "auth/email-already-in-use") {
+                        loginStatus.textContent =
+                            "This email already has an account. Check your password.";
+                    } else if (
+                        createError.code === "auth/weak-password"
+                    ) {
+                        loginStatus.textContent =
+                            "Password must be at least 6 characters.";
+                    } else {
+                        loginStatus.textContent = createError.message;
+                    }
+                }
+
+            } else if (error.code === "auth/wrong-password") {
+                loginStatus.textContent = "Incorrect password.";
+
+            } else if (error.code === "auth/invalid-email") {
+                loginStatus.textContent = "Please enter a valid email address.";
+
+            } else if (error.code === "auth/too-many-requests") {
+                loginStatus.textContent =
+                    "Too many attempts. Please try again later.";
+
+            } else {
+                loginStatus.textContent = error.message;
+            }
+        }
+
+    } finally {
+        loginSubmit.disabled = false;
+        loginSubmit.textContent = "Log in / Create account";
+    }
+});
+
 btn.addEventListener("click", () => {
-    if (!currentUser) return alert("Please log in.");
+    if (!currentUser) {
+        openLoginModal();
+        return;
+    }
+
     const text = input.value;
+
     if (!text.trim()) return;
 
     db.collection("notes").add({
@@ -302,23 +586,31 @@ btn.addEventListener("click", () => {
         text: text,
         time: Date.now()
     })
-    .then(() => input.value = "")
-    .catch(err => alert("Error: " + err.message));
+    .then(() => {
+        input.value = "";
+    })
+    .catch(err => {
+        alert("Error: " + err.message);
+    });
 });
 
 function createItem(text, id) {
     const newItem = document.createElement("li");
+
     newItem.innerText = text;
 
     newItem.addEventListener("click", function() {
         newItem.classList.add("done");
-        
+
         setTimeout(() => {
             newItem.classList.add("fall-away");
         }, 200);
 
         setTimeout(() => {
-            db.collection("notes").doc(id).delete().catch(err => console.error(err));
+            db.collection("notes")
+                .doc(id)
+                .delete()
+                .catch(err => console.error(err));
         }, 700);
     });
 
@@ -326,48 +618,82 @@ function createItem(text, id) {
 }
 
 function loadNotes() {
-    db.collection("notes")
-      .where("uid", "==", currentUser.uid)
-      .onSnapshot(snapshot => {
-          list.innerHTML = "";
-          let notes = [];
-          snapshot.forEach(doc => notes.push({ id: doc.id, ...doc.data() }));
-          
-          notes.sort((a, b) => b.time - a.time);
-          
-          notes.forEach(n => createItem(n.text, n.id));
-      }, error => {
-          alert("Load Error: " + error.message);
-      });
+
+    if (notesListener) {
+        notesListener();
+        notesListener = null;
+    }
+
+    list.innerHTML = "";
+
+    if (!currentUser) return;
+
+    notesListener = db.collection("notes")
+        .where("uid", "==", currentUser.uid)
+        .onSnapshot(snapshot => {
+
+            list.innerHTML = "";
+
+            let notes = [];
+
+            snapshot.forEach(doc => {
+                notes.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            notes.sort((a, b) => b.time - a.time);
+
+            notes.forEach(n => {
+                createItem(n.text, n.id);
+            });
+
+        }, error => {
+            alert("Load Error: " + error.message);
+        });
 }
 
 auth.onAuthStateChanged(user => {
+
     if (user) {
+
         currentUser = user;
-        userName.innerText = user.displayName;
+
+        userName.innerText = user.email || "";
+
         loginBtn.innerText = "Log out";
+
         loadNotes();
+
     } else {
+
         currentUser = null;
+
         userName.innerText = "";
+
         list.innerHTML = "";
+
         loginBtn.innerText = "Log in";
+
+        if (notesListener) {
+            notesListener();
+            notesListener = null;
+        }
     }
 });
 
-loginBtn.onclick = () => {
-    currentUser ? auth.signOut() : auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-};
 </script>
 
- <script>
+<script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(registrations => {
-    for (let registration of registrations) {
-      registration.unregister();
-    }
-  });
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+        for (let registration of registrations) {
+            registration.unregister();
+        }
+    });
 }
-</script> 
+</script>
+
 </body>
 </html>
