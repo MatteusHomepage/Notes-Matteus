@@ -368,36 +368,17 @@ footer {
 <div id="loginModal">
     <div id="loginBox">
         <h2>Log in</h2>
-
         <p id="loginDescription">
-            Enter your email and password to continue.
+            Enter your email and password. New accounts must verify their email address.
         </p>
 
         <form id="loginForm">
-            <input
-                type="email"
-                id="emailInput"
-                placeholder="Email address"
-                autocomplete="email"
-                required
-            >
-
-            <input
-                type="password"
-                id="passwordInput"
-                placeholder="Password"
-                autocomplete="current-password"
-                minlength="6"
-                required
-            >
-
-            <button type="submit" id="loginSubmit">
-                Log in / Create account
-            </button>
+            <input type="email" id="emailInput" placeholder="Email address" autocomplete="email" required>
+            <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password" minlength="6" required>
+            <button type="submit" id="loginSubmit">Log in / Sign up</button>
         </form>
 
         <button id="loginCancel" type="button">Cancel</button>
-
         <div id="loginStatus"></div>
     </div>
 </div>
@@ -407,7 +388,6 @@ footer {
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
-
 const firebaseConfig = {
     apiKey: "AIzaSyCnzFHFx-LkADAuUK42s7Y58sn24AVCT0w",
     authDomain: "notes-matteus.firebaseapp.com",
@@ -461,9 +441,7 @@ function toggleTheme() {
 
     localStorage.setItem(
         "darkMode",
-        document.body.classList.contains("dark-mode")
-            ? "enabled"
-            : "disabled"
+        document.body.classList.contains("dark-mode") ? "enabled" : "disabled"
     );
 }
 
@@ -481,9 +459,7 @@ function closeLoginModal() {
 
 loginBtn.onclick = () => {
     if (currentUser) {
-        auth.signOut().catch(err => {
-            alert("Logout Error: " + err.message);
-        });
+        auth.signOut().catch(err => alert("Logout Error: " + err.message));
     } else {
         openLoginModal();
     }
@@ -492,9 +468,7 @@ loginBtn.onclick = () => {
 loginCancel.onclick = closeLoginModal;
 
 loginModal.addEventListener("click", e => {
-    if (e.target === loginModal) {
-        closeLoginModal();
-    }
+    if (e.target === loginModal) closeLoginModal();
 });
 
 document.addEventListener("keydown", e => {
@@ -520,54 +494,47 @@ loginForm.addEventListener("submit", async e => {
 
     try {
         try {
-            await auth.signInWithEmailAndPassword(email, password);
+            const credential = await auth.signInWithEmailAndPassword(email, password);
+
+            if (!credential.user.emailVerified) {
+                await credential.user.sendEmailVerification();
+                await auth.signOut();
+                loginStatus.textContent = "Please verify your email using the link we just sent. Then log in again.";
+                return;
+            }
 
             closeLoginModal();
-
         } catch (error) {
-
-            if (
-                error.code === "auth/user-not-found" ||
-                error.code === "auth/invalid-credential"
-            ) {
+            if (error.code === "auth/user-not-found" || error.code === "auth/invalid-credential") {
                 try {
-                    await auth.createUserWithEmailAndPassword(email, password);
-
-                    closeLoginModal();
-
+                    const credential = await auth.createUserWithEmailAndPassword(email, password);
+                    await credential.user.sendEmailVerification();
+                    await auth.signOut();
+                    loginStatus.textContent = "Account created. Check your email and click the verification link before logging in.";
                 } catch (createError) {
-
                     if (createError.code === "auth/email-already-in-use") {
-                        loginStatus.textContent =
-                            "This email already has an account. Check your password.";
-                    } else if (
-                        createError.code === "auth/weak-password"
-                    ) {
-                        loginStatus.textContent =
-                            "Password must be at least 6 characters.";
+                        loginStatus.textContent = "This email already has an account. Check your password.";
+                    } else if (createError.code === "auth/weak-password") {
+                        loginStatus.textContent = "Password must be at least 6 characters.";
+                    } else if (createError.code === "auth/invalid-email") {
+                        loginStatus.textContent = "Please enter a valid email address.";
                     } else {
                         loginStatus.textContent = createError.message;
                     }
                 }
-
             } else if (error.code === "auth/wrong-password") {
                 loginStatus.textContent = "Incorrect password.";
-
             } else if (error.code === "auth/invalid-email") {
                 loginStatus.textContent = "Please enter a valid email address.";
-
             } else if (error.code === "auth/too-many-requests") {
-                loginStatus.textContent =
-                    "Too many attempts. Please try again later.";
-
+                loginStatus.textContent = "Too many attempts. Please try again later.";
             } else {
                 loginStatus.textContent = error.message;
             }
         }
-
     } finally {
         loginSubmit.disabled = false;
-        loginSubmit.textContent = "Log in / Create account";
+        loginSubmit.textContent = "Log in / Sign up";
     }
 });
 
@@ -589,28 +556,20 @@ btn.addEventListener("click", () => {
     .then(() => {
         input.value = "";
     })
-    .catch(err => {
-        alert("Error: " + err.message);
-    });
+    .catch(err => alert("Error: " + err.message));
 });
 
 function createItem(text, id) {
     const newItem = document.createElement("li");
-
     newItem.innerText = text;
 
     newItem.addEventListener("click", function() {
         newItem.classList.add("done");
 
-        setTimeout(() => {
-            newItem.classList.add("fall-away");
-        }, 200);
+        setTimeout(() => newItem.classList.add("fall-away"), 200);
 
         setTimeout(() => {
-            db.collection("notes")
-                .doc(id)
-                .delete()
-                .catch(err => console.error(err));
+            db.collection("notes").doc(id).delete().catch(err => console.error(err));
         }, 700);
     });
 
@@ -618,7 +577,6 @@ function createItem(text, id) {
 }
 
 function loadNotes() {
-
     if (notesListener) {
         notesListener();
         notesListener = null;
@@ -631,7 +589,6 @@ function loadNotes() {
     notesListener = db.collection("notes")
         .where("uid", "==", currentUser.uid)
         .onSnapshot(snapshot => {
-
             list.innerHTML = "";
 
             let notes = [];
@@ -645,35 +602,22 @@ function loadNotes() {
 
             notes.sort((a, b) => b.time - a.time);
 
-            notes.forEach(n => {
-                createItem(n.text, n.id);
-            });
-
+            notes.forEach(n => createItem(n.text, n.id));
         }, error => {
             alert("Load Error: " + error.message);
         });
 }
 
 auth.onAuthStateChanged(user => {
-
     if (user) {
-
         currentUser = user;
-
         userName.innerText = user.email || "";
-
         loginBtn.innerText = "Log out";
-
         loadNotes();
-
     } else {
-
         currentUser = null;
-
         userName.innerText = "";
-
         list.innerHTML = "";
-
         loginBtn.innerText = "Log in";
 
         if (notesListener) {
@@ -682,7 +626,6 @@ auth.onAuthStateChanged(user => {
         }
     }
 });
-
 </script>
 
 <script>
@@ -693,7 +636,7 @@ if ('serviceWorker' in navigator) {
         }
     });
 }
-    
 </script>
+
 </body>
 </html>
