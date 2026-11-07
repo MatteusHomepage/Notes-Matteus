@@ -1,79 +1,1097 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Notes | matteushomepage</title><meta name="description" content="Simple notes application created by matteushomepage.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗒️</text></svg>">
-<meta name="google-site-verification" content="o0odX19KzQ29Id3e3SSXmlBCz7bFFEo5cqlWI9CvjJk"><meta name="theme-color" content="#ffffff">
-<style>
-:root{--page:#f5f5f4;--surface:#fff;--surface-alt:#f0f0ef;--text:#222;--muted:#777;--border:#d5d5d3;--button:#ededeb;--shadow:0 2px 0 #e1e1df,0 5px 16px #00000008;--focus:#777}
-*{box-sizing:border-box}
-body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;justify-content:center;margin:0;min-height:100vh;padding:86px 18px 105px;background:var(--page);color:var(--text);transition:background .25s,color .25s}
-body.dark-mode{--page:#202020;--surface:#292929;--surface-alt:#242424;--text:#f1f1f1;--muted:#aaa;--border:#414141;--button:#343434;--shadow:0 2px 0 #181818,0 5px 16px #0002;--focus:#aaa}
-main{width:min(720px,100%)}
-.section-label{display:block;font-size:12px;font-weight:650;letter-spacing:.02em;color:var(--muted);margin:0 0 9px}
-.search-panel{padding:15px 17px;margin-bottom:17px;background:var(--surface);border:1px solid var(--border);border-top-color:#e8e8e7;border-radius:9px;box-shadow:var(--shadow)}
-.dark-mode .search-panel{border-top-color:#4a4a4a}
-#searchInput{width:100%;padding:12px 13px;border:1px solid var(--border);border-radius:6px;background:var(--surface-alt);color:var(--text);font:15px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;outline:none}
-#searchInput:focus,#noteTitle:focus,#noteInput:focus{border-color:var(--focus);box-shadow:0 0 0 2px #8882}
-.editor-panel{padding:19px;background:var(--surface);border:1px solid var(--border);border-top-color:#e8e8e7;border-radius:9px;box-shadow:var(--shadow);margin-bottom:25px}
-.dark-mode .editor-panel{border-top-color:#4a4a4a}
-.input-container{display:flex;flex-direction:column;gap:11px}
-#noteTitle{width:100%;padding:13px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface-alt);color:var(--text);font:600 17px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;outline:none}
-#noteTitle::placeholder{font-weight:400;color:var(--muted)}
-#noteInput{width:100%;min-height:170px;padding:14px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font:15px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;resize:vertical;outline:none}
-button{padding:10px 13px;cursor:pointer;border:1px solid var(--border);border-radius:6px;background:var(--button);color:var(--text);font:14px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;transition:background .2s,border-color .2s}
-button:hover{background:var(--surface-alt)}button:disabled{opacity:.6;cursor:wait}
-#saveBtn{background:var(--button);border:1px solid var(--border);color:var(--text);font-weight:650;padding:12px 16px;box-shadow:inset 0 1px 0 #fff5,0 1px 0 #0000000b}
-.dark-mode #saveBtn{box-shadow:inset 0 1px 0 #ffffff0a,0 1px 0 #0003}
-#cancelEditBtn{background:transparent}
-#notes-list{margin:0;padding:0 0 80px;list-style:none;width:100%}
-.note{list-style:none;background:var(--surface);border:1px solid var(--border);border-top-color:#e8e8e7;padding:17px 18px;margin:0 0 13px;border-radius:8px;box-shadow:var(--shadow);overflow-wrap:anywhere}
-.dark-mode .note{border-top-color:#4a4a4a}
-.note h3{margin:0 0 10px;font-size:18px;font-weight:650;line-height:1.4;color:var(--text)}
-.note p{margin:0;white-space:pre-wrap;line-height:1.6;color:var(--text);font-size:15px}
-.note .note-date{font-size:11px;color:var(--muted);margin-top:10px}
-.actions{display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
-.actions button{font-size:13px;padding:7px 12px}
-#authBar{position:fixed;top:15px;right:15px;z-index:1000;display:flex;align-items:center;gap:9px;max-width:calc(100vw - 30px)}
-#loginBtn,#hubBtn{padding:8px 13px;font-size:13px;border-radius:6px}#userName{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
-footer{position:fixed;bottom:0;left:0;width:100%;text-align:center;font-size:13px;color:var(--muted);padding:15px 0;background:var(--page);box-sizing:border-box;border-top:1px solid var(--border)}
-#mobileThemeBtn{display:none}
-#loginModal{display:none;position:fixed;inset:0;z-index:2000;background:#0009;align-items:center;justify-content:center;padding:15px}#loginModal.visible{display:flex}
-#loginBox{width:100%;max-width:360px;background:var(--surface);color:var(--text);padding:25px;border:1px solid var(--border);border-radius:9px;box-shadow:0 10px 35px #0003}
-#loginBox h2{margin:0 0 8px;text-align:center;font:650 22px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}#loginDescription{text-align:center;font-size:14px;color:var(--muted);margin-bottom:20px}
-#loginBox input{display:block;width:100%;padding:12px;margin-bottom:12px;border:1px solid var(--border);border-radius:6px;background:var(--surface-alt);color:var(--text);font:15px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-#loginSubmit,#registerSubmit{width:100%;padding:12px;background:var(--button);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:15px;margin-top:5px;font-weight:600}
-#loginCancel{width:100%;margin-top:10px}#loginStatus{font-size:13px;text-align:center;margin-top:12px;color:#c0392b;overflow-wrap:break-word}
-@media(max-width:768px){body{padding:78px 13px 85px}main{width:100%}.search-panel{padding:13px 14px;margin-bottom:14px}.editor-panel{padding:15px;margin-bottom:20px}#noteInput{min-height:145px}#mobileThemeBtn{display:flex;position:fixed;top:10px;left:10px;z-index:1100;width:38px;height:38px;padding:0;align-items:center;justify-content:center;border-radius:7px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);font-size:18px}#authBar{top:10px;right:10px;gap:6px}#userName{max-width:90px;font-size:12px}#loginBtn,#hubBtn{padding:7px 9px;font-size:12px}footer p{display:none}footer{font-size:11px;padding:9px 0}}
-</style>
-</head><body>
-<div id="authBar"><span id="userName"></span><button id="loginBtn">Log in</button><button id="hubBtn" onclick="location.href='https://matteushomepage.github.io/Website-Hub'">To Hub</button></div>
-<button id="mobileThemeBtn" type="button" aria-label="Toggle theme" title="Toggle theme">🌓</button><main><section class="search-panel"><label class="section-label" for="searchInput">Search</label><input id="searchInput" type="search" placeholder="Search notes" autocomplete="off"></section><section class="editor-panel"><label class="section-label" for="noteTitle">Write something</label><div class="input-container"><input id="noteTitle" maxlength="160" placeholder="Title (optional)"><textarea id="noteInput" placeholder="Write a note"></textarea><div style="display:flex;gap:9px;align-items:center"><button id="saveBtn" style="flex:1">Create note</button><button id="cancelEditBtn" type="button" style="display:none">Cancel edit</button></div></div></section><section class="notes-section"><span class="section-label">Your notes</span><ul id="notes-list"></ul></section></main>
-<footer><p>Created by Matteus Aydin 2026</p><p style="font-size:12px;opacity:.8;margin-top:5px">Press 'M' to toggle theme</p></footer>
-<div id="loginModal" role="dialog" aria-modal="true"><div id="loginBox"><h2 id="loginHeading">Log in</h2><p id="loginDescription">Use your email and password. For a new account, select Create account; the account is made only after you open the email link.</p><form id="loginForm"><input type="email" id="emailInput" placeholder="Email address" autocomplete="email" required><input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password" minlength="6" required><button type="submit" id="loginSubmit">Log in</button></form><button type="button" id="registerSubmit">Create account</button><button id="loginCancel" type="button">Cancel</button><div id="loginStatus" role="status"></div></div></div>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script>
-const firebaseConfig={apiKey:"AIzaSyCnzFHFx-LkADAuUK42s7Y58sn24AVCT0w",authDomain:"notes-matteus.firebaseapp.com",projectId:"notes-matteus",storageBucket:"notes-matteus.firebasestorage.app",messagingSenderId:"407855896537",appId:"1:407855896537:web:5b09180460472989096bc8"};
-firebase.initializeApp(firebaseConfig);const auth=firebase.auth(),db=firebase.firestore();
-let currentUser=null,notesListener=null,notes=[],editingId=null,linkSetup=false;
-const $=id=>document.getElementById(id),title=$("noteTitle"),input=$("noteInput"),list=$("notes-list"),modal=$("loginModal"),emailInput=$("emailInput"),passwordInput=$("passwordInput"),status=$("loginStatus");
-if(localStorage.getItem("darkMode")==="enabled")document.body.classList.add("dark-mode");
-function toggleTheme(){document.body.classList.toggle("dark-mode");localStorage.setItem("darkMode",document.body.classList.contains("dark-mode")?"enabled":"disabled")}
-$("mobileThemeBtn").onclick=toggleTheme;document.addEventListener("keydown",e=>{if(!["INPUT","TEXTAREA"].includes(e.target.tagName)&&(e.key.toLowerCase()==="m"))toggleTheme();if(e.key==="Escape")closeModal()});
-function openModal(){modal.classList.add("visible");status.textContent="";status.style.color="#c0392b"}function closeModal(){if(linkSetup)return;modal.classList.remove("visible");status.textContent="";$ ("loginForm").reset()}
-$("loginBtn").onclick=()=>currentUser?auth.signOut().catch(e=>alert(e.message)):openModal();$("loginCancel").onclick=closeModal;modal.addEventListener("click",e=>{if(e.target===modal)closeModal()});
-function authError(e){return ({"auth/invalid-credential":"Email or password is incorrect.","auth/wrong-password":"Email or password is incorrect.","auth/user-not-found":"Email or password is incorrect.","auth/invalid-email":"Enter a valid email address.","auth/weak-password":"Password must be at least 6 characters.","auth/too-many-requests":"Too many attempts. Try again later.","auth/network-request-failed":"Network error. Check your connection."})[e.code]||e.message||"Something went wrong."}
-function busy(v,txt){$("loginSubmit").disabled=v;$("registerSubmit").disabled=v;$("loginSubmit").textContent=v?txt:(linkSetup?"Finish account setup":"Log in");$("registerSubmit").textContent=v?"Please wait...":"Create account"}
-$("loginForm").addEventListener("submit",async e=>{e.preventDefault();const email=emailInput.value.trim().toLowerCase(),password=passwordInput.value;if(!email||!password)return;status.textContent="";busy(true,linkSetup?"Finishing...":"Logging in...");try{if(linkSetup){const result=await auth.signInWithEmailLink(email,location.href);const alreadyHasPassword=result.user.providerData.some(p=>p.providerId==="password");if(!alreadyHasPassword){await result.user.linkWithCredential(firebase.auth.EmailAuthProvider.credential(email,password))}localStorage.removeItem("notesEmailForSignIn");linkSetup=false;emailInput.readOnly=false;history.replaceState({},document.title,location.pathname);closeModal()}else{const result=await auth.signInWithEmailAndPassword(email,password);if(!result.user.emailVerified){await auth.signOut();status.textContent="This account's email is not verified. Please complete the Create account email-link flow.";return}closeModal()}}catch(err){status.textContent=authError(err)}finally{busy(false)}});
-$("registerSubmit").onclick=async()=>{const email=emailInput.value.trim().toLowerCase(),password=passwordInput.value;if(!email)return status.textContent="Enter your email address.";if(password.length<6)return status.textContent="Choose a password with at least 6 characters.";status.textContent="";busy(true,"Sending link...");try{await auth.sendSignInLinkToEmail(email,{url:"https://matteushomepage.github.io/Notes/",handleCodeInApp:true});localStorage.setItem("notesEmailForSignIn",email);status.style.color="#218838";status.textContent="Email link sent. Open it on this same browser/device to finish account setup."}catch(err){status.textContent=authError(err)}finally{busy(false);status.style.color="#c0392b"}};
-async function completeEmailLink(){if(!auth.isSignInWithEmailLink(location.href))return;let email=localStorage.getItem("notesEmailForSignIn");if(!email)email=prompt("Enter the email address that received the link:");if(!email){openModal();status.textContent="Email address is needed to complete setup.";return}linkSetup=true;openModal();$("loginHeading").textContent="Finish account setup";$("loginDescription").textContent="The email link is confirmed. Enter the password you want to use for this account.";emailInput.value=email.trim().toLowerCase();emailInput.readOnly=true;passwordInput.value="";$("loginSubmit").textContent="Finish account setup";$("registerSubmit").style.display="none";status.textContent="Complete setup with your password."}
-completeEmailLink().catch(console.error);
-$("saveBtn").onclick=async()=>{if(!currentUser){openModal();return}const noteTitle=title.value.trim(),text=input.value.trim();if(!noteTitle&&!text)return;$("saveBtn").disabled=true;try{const data={uid:currentUser.uid,title:noteTitle,text,time:Date.now(),updatedAt:Date.now()};if(editingId)await db.collection("notes").doc(editingId).update(data);else await db.collection("notes").add(data);resetEditor()}catch(e){alert("Could not save note: "+e.message)}finally{$("saveBtn").disabled=false}};
-function resetEditor(){editingId=null;title.value="";input.value="";$("saveBtn").textContent="Create note";$("cancelEditBtn").style.display="none"}$("cancelEditBtn").onclick=resetEditor;$("searchInput").oninput=render;
-function render(){list.innerHTML="";const q=$("searchInput").value.trim().toLowerCase();notes.filter(n=>{const titleText=(n.title||"").toLocaleLowerCase(),bodyText=(n.text||"").toLocaleLowerCase();const terms=q.split(/\s+/).filter(Boolean);return terms.every(term=>titleText.includes(term)||bodyText.includes(term))}).forEach(n=>{const card=document.createElement("li");card.className="note";if(n.title){const h=document.createElement("h3");h.textContent=n.title;card.appendChild(h)}const p=document.createElement("p");p.textContent=n.text||"";card.appendChild(p);const actions=document.createElement("div");actions.className="actions";const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>{editingId=n.id;title.value=n.title||"";input.value=n.text||"";$ ("saveBtn").textContent="Update note";$ ("cancelEditBtn").style.display="inline-block";window.scrollTo({top:0,behavior:"smooth"})};const del=document.createElement("button");del.textContent="Delete";del.onclick=async()=>{if(confirm("Delete this note permanently?")){try{await db.collection("notes").doc(n.id).delete()}catch(e){alert("Could not delete: "+e.message)}}};actions.append(edit,del);card.appendChild(actions);list.appendChild(card)})}
-function loadNotes(){if(notesListener){notesListener();notesListener=null}notes=[];render();if(!currentUser)return;notesListener=db.collection("notes").where("uid","==",currentUser.uid).onSnapshot(s=>{notes=[];s.forEach(d=>notes.push({id:d.id,...d.data()}));notes.sort((a,b)=>(b.updatedAt||b.time||0)-(a.updatedAt||a.time||0));render()},e=>alert("Notes load error: "+e.message))}
-auth.onAuthStateChanged(user=>{if(user&&user.emailVerified){currentUser=user;$ ("userName").textContent=user.email||"";$ ("loginBtn").textContent="Log out";loadNotes()}else{if(user)auth.signOut().catch(console.error);currentUser=null;$ ("userName").textContent="";list.innerHTML="";notes=[];if(notesListener){notesListener();notesListener=null}$ ("loginBtn").textContent="Log in"}});
-</script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));</script>
-</body></html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes | matteushomepage</title>
+    <meta
+      name="description"
+      content="Simple notes application created by matteushomepage."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗒️</text></svg>"
+    />
+    <meta
+      name="google-site-verification"
+      content="o0odX19KzQ29Id3e3SSXmlBCz7bFFEo5cqlWI9CvjJk"
+    />
+    <meta name="theme-color" content="#ffffff" />
+
+    <style>
+      :root {
+        --page: #f5f5f4;
+        --surface: #ffffff;
+        --surface-alt: #f0f0ef;
+        --text: #222222;
+        --muted: #777777;
+        --border: #d5d5d3;
+        --button: #ededeb;
+        --shadow: 0 2px 0 #e1e1df, 0 5px 16px #00000008;
+        --focus: #777777;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 86px 18px 105px;
+        background: var(--page);
+        color: var(--text);
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        transition:
+          background 0.25s,
+          color 0.25s;
+      }
+
+      body.dark-mode {
+        --page: #202020;
+        --surface: #292929;
+        --surface-alt: #242424;
+        --text: #f1f1f1;
+        --muted: #aaaaaa;
+        --border: #414141;
+        --button: #343434;
+        --shadow: 0 2px 0 #181818, 0 5px 16px #00000022;
+        --focus: #aaaaaa;
+      }
+
+      main {
+        width: min(720px, 100%);
+      }
+
+      .section-label {
+        display: block;
+        margin: 0 0 9px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+      }
+
+      .search-panel,
+      .editor-panel,
+      .note {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-top-color: #e8e8e7;
+        border-radius: 9px;
+        box-shadow: var(--shadow);
+      }
+
+      .dark-mode .search-panel,
+      .dark-mode .editor-panel,
+      .dark-mode .note {
+        border-top-color: #4a4a4a;
+      }
+
+      .search-panel {
+        margin-bottom: 17px;
+        padding: 15px 17px;
+      }
+
+      #searchInput {
+        width: 100%;
+        padding: 12px 13px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        outline: none;
+        background: var(--surface-alt);
+        color: var(--text);
+        font:
+          15px system-ui,
+          sans-serif;
+      }
+
+      .editor-panel {
+        margin-bottom: 25px;
+        padding: 19px;
+      }
+
+      .input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+      }
+
+      #noteTitle {
+        width: 100%;
+        padding: 13px 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        outline: none;
+        background: var(--surface-alt);
+        color: var(--text);
+        font:
+          600 17px system-ui,
+          sans-serif;
+      }
+
+      #noteTitle::placeholder {
+        font-weight: 400;
+        color: var(--muted);
+      }
+
+      #noteInput {
+        width: 100%;
+        min-height: 170px;
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        outline: none;
+        resize: vertical;
+        background: var(--surface);
+        color: var(--text);
+        font:
+          15px/1.6 system-ui,
+          sans-serif;
+      }
+
+      #searchInput:focus,
+      #noteTitle:focus,
+      #noteInput:focus,
+      #loginBox input:focus {
+        border-color: var(--focus);
+        box-shadow: 0 0 0 2px #8882;
+      }
+
+      button {
+        padding: 10px 13px;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--button);
+        color: var(--text);
+        font:
+          14px system-ui,
+          sans-serif;
+        transition:
+          background 0.2s,
+          border-color 0.2s;
+      }
+
+      button:hover {
+        background: var(--surface-alt);
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.6;
+      }
+
+      #saveBtn {
+        padding: 12px 16px;
+        border: 1px solid var(--border);
+        background: var(--button);
+        color: var(--text);
+        font-weight: 650;
+        box-shadow:
+          inset 0 1px 0 #ffffff55,
+          0 1px 0 #0000000b;
+      }
+
+      .dark-mode #saveBtn {
+        box-shadow:
+          inset 0 1px 0 #ffffff0a,
+          0 1px 0 #0003;
+      }
+
+      #cancelEditBtn {
+        background: transparent;
+      }
+
+      #notes-list {
+        width: 100%;
+        margin: 0;
+        padding: 0 0 80px;
+        list-style: none;
+      }
+
+      .note {
+        margin: 0 0 13px;
+        padding: 17px 18px;
+        overflow-wrap: anywhere;
+      }
+
+      .note h3 {
+        margin: 0 0 10px;
+        color: var(--text);
+        font-size: 18px;
+        font-weight: 650;
+        line-height: 1.4;
+      }
+
+      .note p {
+        margin: 0;
+        color: var(--text);
+        font-size: 15px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+      }
+
+      .actions button {
+        padding: 7px 12px;
+        font-size: 13px;
+      }
+
+      #authBar {
+        position: fixed;
+        top: 15px;
+        right: 15px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        max-width: calc(100vw - 30px);
+      }
+
+      #loginBtn,
+      #hubBtn {
+        padding: 8px 13px;
+        border-radius: 6px;
+        font-size: 13px;
+      }
+
+      #userName {
+        max-width: 160px;
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 13px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 15px 0;
+        border-top: 1px solid var(--border);
+        background: var(--page);
+        color: var(--muted);
+        text-align: center;
+        font-size: 13px;
+      }
+
+      #mobileThemeBtn {
+        display: none;
+      }
+
+      #loginModal {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        background: #0009;
+      }
+
+      #loginModal.visible {
+        display: flex;
+      }
+
+      #loginBox {
+        position: relative;
+        width: 100%;
+        max-width: 360px;
+        padding: 27px 25px 25px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: 0 10px 35px #0003;
+      }
+
+      #closeLogin {
+        position: absolute;
+        top: 9px;
+        right: 10px;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 24px;
+        line-height: 1;
+      }
+
+      #closeLogin:hover {
+        background: var(--surface-alt);
+        color: var(--text);
+      }
+
+      #loginBox h2 {
+        margin: 0 0 8px;
+        text-align: center;
+        font:
+          650 22px system-ui,
+          sans-serif;
+      }
+
+      #loginDescription {
+        margin-bottom: 20px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 14px;
+      }
+
+      #loginBox input {
+        display: block;
+        width: 100%;
+        margin-bottom: 12px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        outline: none;
+        background: var(--surface-alt);
+        color: var(--text);
+        font:
+          15px system-ui,
+          sans-serif;
+      }
+
+      #loginSubmit {
+        width: 100%;
+        margin-top: 5px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--button);
+        color: var(--text);
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      #loginStatus {
+        margin-top: 12px;
+        color: #c0392b;
+        text-align: center;
+        font-size: 13px;
+        overflow-wrap: break-word;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 78px 13px 85px;
+        }
+
+        main {
+          width: 100%;
+        }
+
+        .search-panel {
+          margin-bottom: 14px;
+          padding: 13px 14px;
+        }
+
+        .editor-panel {
+          margin-bottom: 20px;
+          padding: 15px;
+        }
+
+        #noteInput {
+          min-height: 145px;
+        }
+
+        #mobileThemeBtn {
+          position: fixed;
+          top: 10px;
+          left: 10px;
+          z-index: 1100;
+          display: flex;
+          width: 38px;
+          height: 38px;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          border-radius: 7px;
+          background: var(--surface);
+          box-shadow: var(--shadow);
+          font-size: 18px;
+        }
+
+        #authBar {
+          top: 10px;
+          right: 10px;
+          gap: 6px;
+        }
+
+        #userName {
+          max-width: 90px;
+          font-size: 12px;
+        }
+
+        #loginBtn,
+        #hubBtn {
+          padding: 7px 9px;
+          font-size: 12px;
+        }
+
+        footer p {
+          display: none;
+        }
+
+        footer {
+          padding: 9px 0;
+          font-size: 11px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="authBar">
+      <span id="userName"></span>
+      <button id="loginBtn">Log in</button>
+      <button
+        id="hubBtn"
+        type="button"
+        onclick="
+          location.href = 'https://matteushomepage.github.io/Website-Hub'
+        "
+      >
+        To Hub
+      </button>
+    </div>
+
+    <button id="mobileThemeBtn" type="button" aria-label="Toggle theme">
+      🌓
+    </button>
+
+    <main>
+      <section class="search-panel">
+        <label class="section-label" for="searchInput">Search</label>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search notes"
+          autocomplete="off"
+        />
+      </section>
+
+      <section class="editor-panel">
+        <label class="section-label" for="noteTitle">Write something</label>
+
+        <div class="input-container">
+          <input
+            id="noteTitle"
+            maxlength="160"
+            placeholder="Title (optional)"
+          />
+          <textarea id="noteInput" placeholder="Write a note"></textarea>
+
+          <div style="display: flex; gap: 9px; align-items: center">
+            <button id="saveBtn" style="flex: 1">Create note</button>
+            <button id="cancelEditBtn" type="button" style="display: none">
+              Cancel edit
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <span class="section-label">Your notes</span>
+        <ul id="notes-list"></ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>Created by Matteus Aydin 2026</p>
+      <p style="font-size: 12px; opacity: 0.8; margin-top: 5px">
+        Press 'M' to toggle theme
+      </p>
+    </footer>
+
+    <div
+      id="loginModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="loginHeading"
+    >
+      <div id="loginBox">
+        <button id="closeLogin" type="button" aria-label="Close login">
+          ×
+        </button>
+        <h2 id="loginHeading">Log in</h2>
+        <p id="loginDescription">Use your email and password.</p>
+
+        <form id="loginForm">
+          <input
+            type="email"
+            id="emailInput"
+            placeholder="Email address"
+            autocomplete="email"
+            required
+          />
+          <input
+            type="password"
+            id="passwordInput"
+            placeholder="Password"
+            autocomplete="current-password"
+            minlength="6"
+            required
+          />
+          <button type="submit" id="loginSubmit">Continue</button>
+        </form>
+
+        <div id="loginStatus" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCnzFHFx-LkADAuUK42s7Y58sn24AVCT0w",
+        authDomain: "notes-matteus.firebaseapp.com",
+        projectId: "notes-matteus",
+        storageBucket: "notes-matteus.firebasestorage.app",
+        messagingSenderId: "407855896537",
+        appId: "1:407855896537:web:5b09180460472989096bc8",
+      };
+
+      firebase.initializeApp(firebaseConfig);
+
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+
+      const elements = {
+        title: document.getElementById("noteTitle"),
+        input: document.getElementById("noteInput"),
+        list: document.getElementById("notes-list"),
+        search: document.getElementById("searchInput"),
+        loginButton: document.getElementById("loginBtn"),
+        userName: document.getElementById("userName"),
+        modal: document.getElementById("loginModal"),
+        loginForm: document.getElementById("loginForm"),
+        email: document.getElementById("emailInput"),
+        password: document.getElementById("passwordInput"),
+        loginSubmit: document.getElementById("loginSubmit"),
+        loginStatus: document.getElementById("loginStatus"),
+        loginHeading: document.getElementById("loginHeading"),
+        loginDescription: document.getElementById("loginDescription"),
+        saveButton: document.getElementById("saveBtn"),
+        cancelEdit: document.getElementById("cancelEditBtn"),
+      };
+
+      const PENDING_EMAIL_KEY = "notesPendingEmail";
+
+      let currentUser = null;
+      let notesListener = null;
+      let notes = [];
+      let editingId = null;
+      let passwordSetupUser = null;
+      let completingEmailLink = false;
+
+      if (localStorage.getItem("darkMode") === "enabled") {
+        document.body.classList.add("dark-mode");
+      }
+
+      function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
+
+        localStorage.setItem(
+          "darkMode",
+          document.body.classList.contains("dark-mode")
+            ? "enabled"
+            : "disabled",
+        );
+      }
+
+      document
+        .getElementById("mobileThemeBtn")
+        .addEventListener("click", toggleTheme);
+
+      document.addEventListener("keydown", (event) => {
+        if (
+          !["INPUT", "TEXTAREA"].includes(event.target.tagName) &&
+          event.key.toLowerCase() === "m"
+        ) {
+          toggleTheme();
+        }
+
+        if (
+          event.key === "Escape" &&
+          elements.modal.classList.contains("visible")
+        ) {
+          closeLoginModal();
+        }
+      });
+
+      function openLoginModal() {
+        elements.modal.classList.add("visible");
+        elements.loginStatus.textContent = "";
+        elements.loginHeading.textContent = "Log in";
+        elements.loginDescription.textContent = "Use your email and password.";
+        elements.loginSubmit.textContent = "Continue";
+        elements.email.readOnly = false;
+        elements.password.autocomplete = "current-password";
+        elements.password.focus();
+      }
+
+      function closeLoginModal() {
+        if (completingEmailLink || passwordSetupUser) {
+          return;
+        }
+
+        elements.modal.classList.remove("visible");
+        elements.loginStatus.textContent = "";
+        elements.loginForm.reset();
+        elements.email.readOnly = false;
+      }
+
+      elements.loginButton.addEventListener("click", () => {
+        if (currentUser) {
+          auth.signOut().catch((error) => {
+            alert("Log out failed: " + error.message);
+          });
+        } else {
+          openLoginModal();
+        }
+      });
+
+      document
+        .getElementById("closeLogin")
+        .addEventListener("click", closeLoginModal);
+
+      elements.modal.addEventListener("click", (event) => {
+        if (event.target === elements.modal) {
+          closeLoginModal();
+        }
+      });
+
+      function showLoginStatus(message, success = false) {
+        elements.loginStatus.textContent = message;
+        elements.loginStatus.style.color = success ? "#39804a" : "#c0392b";
+      }
+
+      function getAuthErrorMessage(error) {
+        const messages = {
+          "auth/invalid-email": "Enter a valid email address.",
+          "auth/weak-password": "Use a password with at least 6 characters.",
+          "auth/too-many-requests":
+            "Too many attempts. Please try again later.",
+          "auth/network-request-failed":
+            "Network error. Check your connection and try again.",
+          "auth/operation-not-allowed":
+            "Email/password and email-link sign-in must be enabled in Firebase Authentication.",
+          "auth/expired-action-code":
+            "This email link has expired. Please request a new one.",
+          "auth/invalid-action-code":
+            "This email link is invalid or has already been used. Please request a new one.",
+          "auth/credential-already-in-use":
+            "This email already has a password account. Try logging in again.",
+        };
+
+        return messages[error.code] || error.message || "Something went wrong.";
+      }
+
+      function setLoginBusy(busy, message = "Continue") {
+        elements.loginSubmit.disabled = busy;
+        elements.loginSubmit.textContent = busy ? message : "Continue";
+      }
+
+      function getContinueUrl() {
+        const url = new URL(window.location.href);
+        url.search = "";
+        url.hash = "";
+        return url.toString();
+      }
+
+      async function sendSignInLink(email) {
+        const actionCodeSettings = {
+          url: getContinueUrl(),
+          handleCodeInApp: true,
+        };
+
+        await auth.sendSignInLinkToEmail(email, actionCodeSettings);
+
+        localStorage.setItem(PENDING_EMAIL_KEY, email);
+
+        showLoginStatus(
+          "Check your inbox for the sign-in link. If it isn't there, check your spam or junk folder.",
+          true,
+        );
+      }
+
+      async function signInOrStartRegistration(email, password) {
+        try {
+          const result = await auth.signInWithEmailAndPassword(email, password);
+
+          if (result.user.emailVerified) {
+            closeLoginModal();
+            return;
+          }
+
+          await auth.signOut();
+          await sendSignInLink(email);
+        } catch (error) {
+          const fallbackCodes = [
+            "auth/user-not-found",
+            "auth/invalid-credential",
+            "auth/wrong-password",
+          ];
+
+          if (fallbackCodes.includes(error.code)) {
+            await sendSignInLink(email);
+            return;
+          }
+
+          throw error;
+        }
+      }
+
+      elements.loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const email = elements.email.value.trim().toLowerCase();
+        const password = elements.password.value;
+
+        if (!email || password.length < 6) {
+          showLoginStatus(
+            "Enter your email and a password with at least 6 characters.",
+          );
+          return;
+        }
+
+        if (passwordSetupUser) {
+          await finishPasswordSetup(email, password);
+          return;
+        }
+
+        showLoginStatus("");
+        setLoginBusy(true, "Please wait...");
+
+        try {
+          await signInOrStartRegistration(email, password);
+        } catch (error) {
+          showLoginStatus(getAuthErrorMessage(error));
+        } finally {
+          setLoginBusy(false);
+        }
+      });
+
+      async function finishPasswordSetup(email, password) {
+        if (password.length < 6) {
+          showLoginStatus("Use a password with at least 6 characters.");
+          return;
+        }
+
+        setLoginBusy(true, "Setting password...");
+
+        try {
+          const credential = firebase.auth.EmailAuthProvider.credential(
+            email,
+            password,
+          );
+
+          await passwordSetupUser.linkWithCredential(credential);
+
+          passwordSetupUser = null;
+          completingEmailLink = false;
+          finishEmailLinkCleanup();
+          elements.modal.classList.remove("visible");
+          elements.loginForm.reset();
+          elements.email.readOnly = false;
+        } catch (error) {
+          showLoginStatus(getAuthErrorMessage(error));
+        } finally {
+          setLoginBusy(false);
+        }
+      }
+
+      function finishEmailLinkCleanup() {
+        localStorage.removeItem(PENDING_EMAIL_KEY);
+
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+      }
+
+      async function completeEmailLink() {
+        if (!auth.isSignInWithEmailLink(window.location.href)) {
+          return;
+        }
+
+        completingEmailLink = true;
+
+        let email = localStorage.getItem(PENDING_EMAIL_KEY);
+
+        if (!email) {
+          email = window.prompt(
+            "Enter the email address where you received the link:",
+          );
+        }
+
+        if (!email) {
+          completingEmailLink = false;
+          openLoginModal();
+          showLoginStatus("Enter the email address that received the link.");
+          return;
+        }
+
+        email = email.trim().toLowerCase();
+
+        try {
+          const result = await auth.signInWithEmailLink(
+            email,
+            window.location.href,
+          );
+
+          const hasPasswordProvider = result.user.providerData.some(
+            (provider) => provider.providerId === "password",
+          );
+
+          if (!hasPasswordProvider) {
+            passwordSetupUser = result.user;
+
+            elements.modal.classList.add("visible");
+            elements.loginHeading.textContent = "Set your password";
+            elements.loginDescription.textContent =
+              "Choose a password for future logins.";
+            elements.email.value = email;
+            elements.email.readOnly = true;
+            elements.password.value = "";
+            elements.password.autocomplete = "new-password";
+            elements.loginSubmit.textContent = "Set password";
+
+            showLoginStatus(
+              "Your email is verified. Set a password to finish.",
+              true,
+            );
+            completingEmailLink = false;
+            return;
+          }
+
+          finishEmailLinkCleanup();
+          completingEmailLink = false;
+          elements.modal.classList.remove("visible");
+        } catch (error) {
+          completingEmailLink = false;
+          openLoginModal();
+          showLoginStatus(getAuthErrorMessage(error));
+        }
+      }
+
+      elements.saveButton.addEventListener("click", async () => {
+        if (!currentUser) {
+          openLoginModal();
+          return;
+        }
+
+        const title = elements.title.value.trim();
+        const text = elements.input.value.trim();
+
+        if (!title && !text) {
+          return;
+        }
+
+        elements.saveButton.disabled = true;
+
+        try {
+          const timestamp = Date.now();
+
+          const noteData = {
+            uid: currentUser.uid,
+            title,
+            text,
+            time: timestamp,
+            updatedAt: timestamp,
+          };
+
+          if (editingId) {
+            await db.collection("notes").doc(editingId).update(noteData);
+          } else {
+            await db.collection("notes").add(noteData);
+          }
+
+          resetEditor();
+        } catch (error) {
+          alert("Could not save note: " + error.message);
+        } finally {
+          elements.saveButton.disabled = false;
+        }
+      });
+
+      function resetEditor() {
+        editingId = null;
+        elements.title.value = "";
+        elements.input.value = "";
+        elements.saveButton.textContent = "Create note";
+        elements.cancelEdit.style.display = "none";
+      }
+
+      elements.cancelEdit.addEventListener("click", resetEditor);
+      elements.search.addEventListener("input", renderNotes);
+
+      function renderNotes() {
+        elements.list.innerHTML = "";
+
+        const searchTerms = elements.search.value
+          .trim()
+          .toLocaleLowerCase()
+          .split(/\s+/)
+          .filter(Boolean);
+
+        const filteredNotes = notes.filter((note) => {
+          const title = (note.title || "").toLocaleLowerCase();
+          const text = (note.text || "").toLocaleLowerCase();
+
+          return searchTerms.every(
+            (term) => title.includes(term) || text.includes(term),
+          );
+        });
+
+        filteredNotes.forEach((note) => {
+          const card = document.createElement("li");
+          card.className = "note";
+
+          if (note.title) {
+            const heading = document.createElement("h3");
+            heading.textContent = note.title;
+            card.appendChild(heading);
+          }
+
+          const content = document.createElement("p");
+          content.textContent = note.text || "";
+          card.appendChild(content);
+
+          const actions = document.createElement("div");
+          actions.className = "actions";
+
+          const editButton = document.createElement("button");
+          editButton.type = "button";
+          editButton.textContent = "Edit";
+
+          editButton.addEventListener("click", () => {
+            editingId = note.id;
+            elements.title.value = note.title || "";
+            elements.input.value = note.text || "";
+            elements.saveButton.textContent = "Update note";
+            elements.cancelEdit.style.display = "inline-block";
+
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+          });
+
+          const deleteButton = document.createElement("button");
+          deleteButton.type = "button";
+          deleteButton.textContent = "Delete";
+
+          deleteButton.addEventListener("click", async () => {
+            if (!confirm("Delete this note permanently?")) {
+              return;
+            }
+
+            try {
+              await db.collection("notes").doc(note.id).delete();
+            } catch (error) {
+              alert("Could not delete note: " + error.message);
+            }
+          });
+
+          actions.append(editButton, deleteButton);
+          card.appendChild(actions);
+          elements.list.appendChild(card);
+        });
+      }
+
+      function loadNotes() {
+        if (notesListener) {
+          notesListener();
+          notesListener = null;
+        }
+
+        notes = [];
+        renderNotes();
+
+        if (!currentUser) {
+          return;
+        }
+
+        notesListener = db
+          .collection("notes")
+          .where("uid", "==", currentUser.uid)
+          .onSnapshot(
+            (snapshot) => {
+              notes = [];
+
+              snapshot.forEach((document) => {
+                notes.push({
+                  id: document.id,
+                  ...document.data(),
+                });
+              });
+
+              notes.sort((a, b) => {
+                return (
+                  (b.updatedAt || b.time || 0) - (a.updatedAt || a.time || 0)
+                );
+              });
+
+              renderNotes();
+            },
+            (error) => {
+              alert("Could not load notes: " + error.message);
+            },
+          );
+      }
+
+      auth.onAuthStateChanged((user) => {
+        if (user && user.emailVerified) {
+          currentUser = user;
+          elements.userName.textContent = user.email || "";
+          elements.loginButton.textContent = "Log out";
+          loadNotes();
+          return;
+        }
+
+        if (user && !user.emailVerified) {
+          auth.signOut().catch(console.error);
+        }
+
+        currentUser = null;
+        elements.userName.textContent = "";
+        elements.loginButton.textContent = "Log in";
+        elements.list.innerHTML = "";
+        notes = [];
+
+        if (notesListener) {
+          notesListener();
+          notesListener = null;
+        }
+      });
+
+      completeEmailLink().catch((error) => {
+        completingEmailLink = false;
+        console.error("Email link completion failed:", error);
+      });
+    </script>
+  </body>
+</html>
