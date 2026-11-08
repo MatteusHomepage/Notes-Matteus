@@ -1,1000 +1,946 @@
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Notes | matteushomepage</title>
-<meta name="description" content="Simple notes application created by matteushomepage.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗒️</text></svg>">
-<meta name="google-site-verification" content="o0odX19KzQ29Id3e3SSXmlBCz7bFFEo5cqlWI9CvjJk">
-<meta name="theme-color" content="#ffffff">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes | matteushomepage</title>
+    <meta
+      name="description"
+      content="Simple notes application created by matteushomepage."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗒️</text></svg>"
+    />
+    <meta
+      name="google-site-verification"
+      content="o0odX19KzQ29Id3e3SSXmlBCz7bFFEo5cqlWI9CvjJk"
+    />
+    <meta name="theme-color" content="#ffffff" />
 
-<style>
-:root {
-    --page: #f5f5f4;
-    --surface: #ffffff;
-    --surface-alt: #f0f0ef;
-    --text: #222222;
-    --muted: #777777;
-    --border: #d5d5d3;
-    --button: #ededeb;
-    --shadow: 0 2px 0 #e1e1df, 0 5px 16px #00000008;
-    --focus: #777777;
-}
+    <style>
+      :root {
+        --page: #f5f5f4;
+        --surface: #ffffff;
+        --surface-alt: #f0f0ef;
+        --text: #222222;
+        --muted: #777777;
+        --border: #d5d5d3;
+        --button: #ededeb;
+        --shadow: 0 2px 0 #e1e1df, 0 5px 16px #00000008;
+        --focus: #777777;
+      }
 
-* {
-    box-sizing: border-box;
-}
+      * {
+        box-sizing: border-box;
+      }
 
-body {
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 86px 18px 105px;
-    background: var(--page);
-    color: var(--text);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    transition: background 0.25s, color 0.25s;
-}
-
-body.dark-mode {
-    --page: #202020;
-    --surface: #292929;
-    --surface-alt: #242424;
-    --text: #f1f1f1;
-    --muted: #aaaaaa;
-    --border: #414141;
-    --button: #343434;
-    --shadow: 0 2px 0 #181818, 0 5px 16px #00000022;
-    --focus: #aaaaaa;
-}
-
-main {
-    width: min(720px, 100%);
-}
-
-.section-label {
-    display: block;
-    margin: 0 0 9px;
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 650;
-    letter-spacing: 0.02em;
-}
-
-.search-panel,
-.editor-panel,
-.note {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top-color: #e8e8e7;
-    border-radius: 9px;
-    box-shadow: var(--shadow);
-}
-
-.dark-mode .search-panel,
-.dark-mode .editor-panel,
-.dark-mode .note {
-    border-top-color: #4a4a4a;
-}
-
-.search-panel {
-    margin-bottom: 17px;
-    padding: 15px 17px;
-}
-
-#searchInput {
-    width: 100%;
-    padding: 12px 13px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    outline: none;
-    background: var(--surface-alt);
-    color: var(--text);
-    font: 15px system-ui, sans-serif;
-}
-
-.editor-panel {
-    margin-bottom: 25px;
-    padding: 19px;
-}
-
-.input-container {
-    display: flex;
-    flex-direction: column;
-    gap: 11px;
-}
-
-#noteTitle {
-    width: 100%;
-    padding: 13px 14px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    outline: none;
-    background: var(--surface-alt);
-    color: var(--text);
-    font: 600 17px system-ui, sans-serif;
-}
-
-#noteTitle::placeholder {
-    font-weight: 400;
-    color: var(--muted);
-}
-
-#noteInput {
-    width: 100%;
-    min-height: 170px;
-    padding: 14px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    outline: none;
-    resize: vertical;
-    background: var(--surface);
-    color: var(--text);
-    font: 15px/1.6 system-ui, sans-serif;
-}
-
-#searchInput:focus,
-#noteTitle:focus,
-#noteInput:focus,
-#loginBox input:focus {
-    border-color: var(--focus);
-    box-shadow: 0 0 0 2px #8882;
-}
-
-button {
-    padding: 10px 13px;
-    cursor: pointer;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--button);
-    color: var(--text);
-    font: 14px system-ui, sans-serif;
-    transition: background 0.2s, border-color 0.2s;
-}
-
-button:hover {
-    background: var(--surface-alt);
-}
-
-button:disabled {
-    cursor: wait;
-    opacity: 0.6;
-}
-
-#saveBtn {
-    padding: 12px 16px;
-    border: 1px solid var(--border);
-    background: var(--button);
-    color: var(--text);
-    font-weight: 650;
-    box-shadow: inset 0 1px 0 #ffffff55, 0 1px 0 #0000000b;
-}
-
-.dark-mode #saveBtn {
-    box-shadow: inset 0 1px 0 #ffffff0a, 0 1px 0 #0003;
-}
-
-#cancelEditBtn {
-    background: transparent;
-}
-
-#notes-list {
-    width: 100%;
-    margin: 0;
-    padding: 0 0 80px;
-    list-style: none;
-}
-
-.note {
-    margin: 0 0 13px;
-    padding: 17px 18px;
-    overflow-wrap: anywhere;
-}
-
-.note h3 {
-    margin: 0 0 10px;
-    color: var(--text);
-    font-size: 18px;
-    font-weight: 650;
-    line-height: 1.4;
-}
-
-.note p {
-    margin: 0;
-    color: var(--text);
-    font-size: 15px;
-    line-height: 1.6;
-    white-space: pre-wrap;
-}
-
-.actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-}
-
-.actions button {
-    padding: 7px 12px;
-    font-size: 13px;
-}
-
-#authBar {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    max-width: calc(100vw - 30px);
-}
-
-#loginBtn,
-#hubBtn {
-    padding: 8px 13px;
-    border-radius: 6px;
-    font-size: 13px;
-}
-
-#userName {
-    max-width: 160px;
-    overflow: hidden;
-    color: var(--muted);
-    font-size: 13px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 15px 0;
-    border-top: 1px solid var(--border);
-    background: var(--page);
-    color: var(--muted);
-    text-align: center;
-    font-size: 13px;
-}
-
-#mobileThemeBtn {
-    display: none;
-}
-
-#loginModal {
-    position: fixed;
-    inset: 0;
-    z-index: 2000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 15px;
-    background: #0009;
-}
-
-#loginModal.visible {
-    display: flex;
-}
-
-#loginBox {
-    position: relative;
-    width: 100%;
-    max-width: 360px;
-    padding: 27px 25px 25px;
-    border: 1px solid var(--border);
-    border-radius: 9px;
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: 0 10px 35px #0003;
-}
-
-#closeLogin {
-    position: absolute;
-    top: 9px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border: 0;
-    border-radius: 5px;
-    background: transparent;
-    color: var(--muted);
-    font-size: 24px;
-    line-height: 1;
-}
-
-#closeLogin:hover {
-    background: var(--surface-alt);
-    color: var(--text);
-}
-
-#loginBox h2 {
-    margin: 0 0 8px;
-    text-align: center;
-    font: 650 22px system-ui, sans-serif;
-}
-
-#loginDescription {
-    margin-bottom: 20px;
-    color: var(--muted);
-    text-align: center;
-    font-size: 14px;
-}
-
-#loginBox input {
-    display: block;
-    width: 100%;
-    margin-bottom: 12px;
-    padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    outline: none;
-    background: var(--surface-alt);
-    color: var(--text);
-    font: 15px system-ui, sans-serif;
-}
-
-#loginSubmit {
-    width: 100%;
-    margin-top: 5px;
-    padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--button);
-    color: var(--text);
-    font-size: 15px;
-    font-weight: 600;
-}
-
-#loginStatus {
-    margin-top: 12px;
-    color: #c0392b;
-    text-align: center;
-    font-size: 13px;
-    overflow-wrap: break-word;
-}
-
-@media (max-width: 768px) {
-    body {
-        padding: 78px 13px 85px;
-    }
-
-    main {
-        width: 100%;
-    }
-
-    .search-panel {
-        margin-bottom: 14px;
-        padding: 13px 14px;
-    }
-
-    .editor-panel {
-        margin-bottom: 20px;
-        padding: 15px;
-    }
-
-    #noteInput {
-        min-height: 145px;
-    }
-
-    #mobileThemeBtn {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 1100;
+      body {
         display: flex;
-        width: 38px;
-        height: 38px;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 86px 18px 105px;
+        background: var(--page);
+        color: var(--text);
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        transition:
+          background 0.25s,
+          color 0.25s;
+      }
+
+      body.dark-mode {
+        --page: #202020;
+        --surface: #292929;
+        --surface-alt: #242424;
+        --text: #f1f1f1;
+        --muted: #aaaaaa;
+        --border: #414141;
+        --button: #343434;
+        --shadow: 0 2px 0 #181818, 0 5px 16px #00000022;
+        --focus: #aaaaaa;
+      }
+
+      main {
+        width: min(720px, 100%);
+      }
+
+      .section-label {
+        display: block;
+        margin: 0 0 9px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+      }
+
+      .search-panel,
+      .editor-panel,
+      .note {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-top-color: #e8e8e7;
+        border-radius: 9px;
+        box-shadow: var(--shadow);
+      }
+
+      .dark-mode .search-panel,
+      .dark-mode .editor-panel,
+      .dark-mode .note {
+        border-top-color: #4a4a4a;
+      }
+
+      .search-panel {
+        margin-bottom: 17px;
+        padding: 15px 17px;
+      }
+
+      #searchInput {
+        width: 100%;
+        padding: 12px 13px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        outline: none;
+        background: var(--surface-alt);
+        color: var(--text);
+        font:
+          15px system-ui,
+          sans-serif;
+      }
+
+      .editor-panel {
+        margin-bottom: 25px;
+        padding: 19px;
+      }
+
+      .input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+      }
+
+      #noteTitle {
+        width: 100%;
+        padding: 13px 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        outline: none;
+        background: var(--surface-alt);
+        color: var(--text);
+        font:
+          600 17px system-ui,
+          sans-serif;
+      }
+
+      #noteTitle::placeholder {
+        font-weight: 400;
+        color: var(--muted);
+      }
+
+      #noteInput {
+        width: 100%;
+        min-height: 170px;
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        outline: none;
+        resize: vertical;
+        background: var(--surface);
+        color: var(--text);
+        font:
+          15px/1.6 system-ui,
+          sans-serif;
+      }
+
+      #searchInput:focus,
+      #noteTitle:focus,
+      #noteInput:focus,
+      #loginBox input:focus {
+        border-color: var(--focus);
+        box-shadow: 0 0 0 2px #8882;
+      }
+
+      button {
+        padding: 10px 13px;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--button);
+        color: var(--text);
+        font:
+          14px system-ui,
+          sans-serif;
+        transition:
+          background 0.2s,
+          border-color 0.2s;
+      }
+
+      button:hover {
+        background: var(--surface-alt);
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.6;
+      }
+
+      #saveBtn {
+        padding: 12px 16px;
+        border: 1px solid var(--border);
+        background: var(--button);
+        color: var(--text);
+        font-weight: 650;
+        box-shadow:
+          inset 0 1px 0 #ffffff55,
+          0 1px 0 #0000000b;
+      }
+
+      .dark-mode #saveBtn {
+        box-shadow:
+          inset 0 1px 0 #ffffff0a,
+          0 1px 0 #0003;
+      }
+
+      #cancelEditBtn {
+        background: transparent;
+      }
+
+      #notes-list {
+        width: 100%;
+        margin: 0;
+        padding: 0 0 80px;
+        list-style: none;
+      }
+
+      .note {
+        margin: 0 0 13px;
+        padding: 17px 18px;
+        overflow-wrap: anywhere;
+      }
+
+      .note h3 {
+        margin: 0 0 10px;
+        color: var(--text);
+        font-size: 18px;
+        font-weight: 650;
+        line-height: 1.4;
+      }
+
+      .note p {
+        margin: 0;
+        color: var(--text);
+        font-size: 15px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+      }
+
+      .actions button {
+        padding: 7px 12px;
+        font-size: 13px;
+      }
+
+      #authBar {
+        position: fixed;
+        top: 15px;
+        right: 15px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        max-width: calc(100vw - 30px);
+      }
+
+      #loginBtn,
+      #hubBtn {
+        padding: 8px 13px;
+        border-radius: 6px;
+        font-size: 13px;
+      }
+
+      #userName {
+        max-width: 160px;
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 13px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 15px 0;
+        border-top: 1px solid var(--border);
+        background: var(--page);
+        color: var(--muted);
+        text-align: center;
+        font-size: 13px;
+      }
+
+      #mobileThemeBtn {
+        display: none;
+      }
+
+      #loginModal {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: none;
         align-items: center;
         justify-content: center;
-        padding: 0;
-        border-radius: 7px;
+        padding: 15px;
+        background: #0009;
+      }
+
+      #loginModal.visible {
+        display: flex;
+      }
+
+      #loginBox {
+        position: relative;
+        width: 100%;
+        max-width: 360px;
+        padding: 27px 25px 25px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
         background: var(--surface);
-        box-shadow: var(--shadow);
-        font-size: 18px;
-    }
+        color: var(--text);
+        box-shadow: 0 10px 35px #0003;
+      }
 
-    #authBar {
-        top: 10px;
+      #closeLogin {
+        position: absolute;
+        top: 9px;
         right: 10px;
-        gap: 6px;
-    }
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 24px;
+        line-height: 1;
+      }
 
-    #userName {
-        max-width: 90px;
-        font-size: 12px;
-    }
+      #closeLogin:hover {
+        background: var(--surface-alt);
+        color: var(--text);
+      }
 
-    #loginBtn,
-    #hubBtn {
-        padding: 7px 9px;
-        font-size: 12px;
-    }
+      #loginBox h2 {
+        margin: 0 0 8px;
+        text-align: center;
+        font:
+          650 22px system-ui,
+          sans-serif;
+      }
 
-    footer p {
-        display: none;
-    }
+      #loginDescription {
+        margin-bottom: 20px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 14px;
+      }
 
-    footer {
-        padding: 9px 0;
-        font-size: 11px;
-    }
-}
-</style>
-</head>
+      #loginBox input {
+        display: block;
+        width: 100%;
+        margin-bottom: 12px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        outline: none;
+        background: var(--surface-alt);
+        color: var(--text);
+        font:
+          15px system-ui,
+          sans-serif;
+      }
 
-<body>
+      #loginSubmit {
+        width: 100%;
+        margin-top: 5px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--button);
+        color: var(--text);
+        font-size: 15px;
+        font-weight: 600;
+      }
 
-<div id="authBar">
-    <span id="userName"></span>
-    <button id="loginBtn">Log in</button>
-    <button id="hubBtn" type="button" onclick="location.href='https://matteushomepage.github.io/Website-Hub'">To Hub</button>
-</div>
+      #loginStatus {
+        margin-top: 12px;
+        color: #c0392b;
+        text-align: center;
+        font-size: 13px;
+        overflow-wrap: break-word;
+      }
 
-<button id="mobileThemeBtn" type="button" aria-label="Toggle theme">🌓</button>
+      @media (max-width: 768px) {
+        body {
+          padding: 78px 13px 85px;
+        }
 
-<main>
-    <section class="search-panel">
+        main {
+          width: 100%;
+        }
+
+        .search-panel {
+          margin-bottom: 14px;
+          padding: 13px 14px;
+        }
+
+        .editor-panel {
+          margin-bottom: 20px;
+          padding: 15px;
+        }
+
+        #noteInput {
+          min-height: 145px;
+        }
+
+        #mobileThemeBtn {
+          position: fixed;
+          top: 10px;
+          left: 10px;
+          z-index: 1100;
+          display: flex;
+          width: 38px;
+          height: 38px;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          border-radius: 7px;
+          background: var(--surface);
+          box-shadow: var(--shadow);
+          font-size: 18px;
+        }
+
+        #authBar {
+          top: 10px;
+          right: 10px;
+          gap: 6px;
+        }
+
+        #userName {
+          max-width: 90px;
+          font-size: 12px;
+        }
+
+        #loginBtn,
+        #hubBtn {
+          padding: 7px 9px;
+          font-size: 12px;
+        }
+
+        footer p {
+          display: none;
+        }
+
+        footer {
+          padding: 9px 0;
+          font-size: 11px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="authBar">
+      <span id="userName"></span>
+      <button id="loginBtn">Log in</button>
+      <button
+        id="hubBtn"
+        type="button"
+        onclick="
+          location.href = 'https://matteushomepage.github.io/Website-Hub'
+        "
+      >
+        To Hub
+      </button>
+    </div>
+
+    <button id="mobileThemeBtn" type="button" aria-label="Toggle theme">
+      🌓
+    </button>
+
+    <main>
+      <section class="search-panel">
         <label class="section-label" for="searchInput">Search</label>
-        <input id="searchInput" type="search" placeholder="Search notes" autocomplete="off">
-    </section>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search notes"
+          autocomplete="off"
+        />
+      </section>
 
-    <section class="editor-panel">
+      <section class="editor-panel">
         <label class="section-label" for="noteTitle">Write something</label>
 
         <div class="input-container">
-            <input id="noteTitle" maxlength="160" placeholder="Title (optional)">
-            <textarea id="noteInput" placeholder="Write a note"></textarea>
+          <input
+            id="noteTitle"
+            maxlength="160"
+            placeholder="Title (optional)"
+          />
+          <textarea id="noteInput" placeholder="Write a note"></textarea>
 
-            <div style="display:flex;gap:9px;align-items:center">
-                <button id="saveBtn" style="flex:1">Create note</button>
-                <button id="cancelEditBtn" type="button" style="display:none">Cancel edit</button>
-            </div>
+          <div style="display: flex; gap: 9px; align-items: center">
+            <button id="saveBtn" style="flex: 1">Create note</button>
+            <button id="cancelEditBtn" type="button" style="display: none">
+              Cancel edit
+            </button>
+          </div>
         </div>
-    </section>
+      </section>
 
-    <section>
+      <section>
         <span class="section-label">Your notes</span>
         <ul id="notes-list"></ul>
-    </section>
-</main>
+      </section>
+    </main>
 
-<footer>
-    <p>Created by Matteus Aydin 2026</p>
-    <p style="font-size:12px;opacity:.8;margin-top:5px">Press 'M' to toggle theme</p>
-</footer>
+    <footer>
+      <p>Created by Matteus Aydin 2026</p>
+      <p style="font-size: 12px; opacity: 0.8; margin-top: 5px">
+        Press 'M' to toggle theme
+      </p>
+    </footer>
 
-<div id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginHeading">
-    <div id="loginBox">
-        <button id="closeLogin" type="button" aria-label="Close login">×</button>
+    <div
+      id="loginModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="loginHeading"
+    >
+      <div id="loginBox">
+        <button id="closeLogin" type="button" aria-label="Close login">
+          ×
+        </button>
         <h2 id="loginHeading">Log in</h2>
         <p id="loginDescription">Enter your email and password.</p>
 
         <form id="loginForm">
-            <input type="email" id="emailInput" placeholder="Email address" autocomplete="email" required>
-            <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password" minlength="6" required>
-            <button type="submit" id="loginSubmit">Log in</button>
+          <input
+            type="email"
+            id="emailInput"
+            placeholder="Email address"
+            autocomplete="email"
+            required
+          />
+          <input
+            type="password"
+            id="passwordInput"
+            placeholder="Password"
+            autocomplete="current-password"
+            minlength="6"
+            required
+          />
+          <button type="submit" id="loginSubmit">Log in</button>
         </form>
 
         <div id="loginStatus" role="status" aria-live="polite"></div>
+      </div>
     </div>
-</div>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-<script>
-const firebaseConfig = {
-    apiKey: "AIzaSyCnzFHFx-LkADAuUK42s7Y58sn24AVCT0w",
-    authDomain: "notes-matteus.firebaseapp.com",
-    projectId: "notes-matteus",
-    storageBucket: "notes-matteus.firebasestorage.app",
-    messagingSenderId: "407855896537",
-    appId: "1:407855896537:web:5b09180460472989096bc8"
-};
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCnzFHFx-LkADAuUK42s7Y58sn24AVCT0w",
+        authDomain: "notes-matteus.firebaseapp.com",
+        projectId: "notes-matteus",
+        storageBucket: "notes-matteus.firebasestorage.app",
+        messagingSenderId: "407855896537",
+        appId: "1:407855896537:web:5b09180460472989096bc8",
+      };
 
-firebase.initializeApp(firebaseConfig);
+      firebase.initializeApp(firebaseConfig);
 
-const auth = firebase.auth();
-const db = firebase.firestore();
+      const auth = firebase.auth();
+      const db = firebase.firestore();
 
-const elements = {
-    title: document.getElementById("noteTitle"),
-    input: document.getElementById("noteInput"),
-    list: document.getElementById("notes-list"),
-    search: document.getElementById("searchInput"),
-    loginButton: document.getElementById("loginBtn"),
-    userName: document.getElementById("userName"),
-    modal: document.getElementById("loginModal"),
-    loginForm: document.getElementById("loginForm"),
-    email: document.getElementById("emailInput"),
-    password: document.getElementById("passwordInput"),
-    loginSubmit: document.getElementById("loginSubmit"),
-    loginStatus: document.getElementById("loginStatus"),
-    loginHeading: document.getElementById("loginHeading"),
-    loginDescription: document.getElementById("loginDescription"),
-    saveButton: document.getElementById("saveBtn"),
-    cancelEdit: document.getElementById("cancelEditBtn")
-};
+      const elements = {
+        title: document.getElementById("noteTitle"),
+        input: document.getElementById("noteInput"),
+        list: document.getElementById("notes-list"),
+        search: document.getElementById("searchInput"),
+        loginButton: document.getElementById("loginBtn"),
+        userName: document.getElementById("userName"),
+        modal: document.getElementById("loginModal"),
+        loginForm: document.getElementById("loginForm"),
+        email: document.getElementById("emailInput"),
+        password: document.getElementById("passwordInput"),
+        loginSubmit: document.getElementById("loginSubmit"),
+        loginStatus: document.getElementById("loginStatus"),
+        loginHeading: document.getElementById("loginHeading"),
+        loginDescription: document.getElementById("loginDescription"),
+        saveButton: document.getElementById("saveBtn"),
+        cancelEdit: document.getElementById("cancelEditBtn"),
+      };
 
-const PENDING_EMAIL_KEY = "notesPendingEmail";
-const PENDING_PASSWORD_KEY = "notesPendingPassword";
+      let currentUser = null;
+      let notesListener = null;
+      let notes = [];
+      let editingId = null;
 
-let currentUser = null;
-let notesListener = null;
-let notes = [];
-let editingId = null;
-let completingEmailLink = false;
-let passwordSetupUser = null;
+      localStorage.removeItem("notesPendingEmail");
+      localStorage.removeItem("notesPendingPassword");
 
-if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-mode");
-}
+      if (localStorage.getItem("darkMode") === "enabled") {
+        document.body.classList.add("dark-mode");
+      }
 
-function toggleTheme() {
-    document.body.classList.toggle("dark-mode");
+      function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
 
-    localStorage.setItem(
-        "darkMode",
-        document.body.classList.contains("dark-mode") ? "enabled" : "disabled"
-    );
-}
-
-document.getElementById("mobileThemeBtn").addEventListener("click", toggleTheme);
-
-document.addEventListener("keydown", event => {
-    if (
-        !["INPUT", "TEXTAREA"].includes(event.target.tagName) &&
-        event.key.toLowerCase() === "m"
-    ) {
-        toggleTheme();
-    }
-
-    if (event.key === "Escape" && elements.modal.classList.contains("visible")) {
-        closeLoginModal();
-    }
-});
-
-function showLoginStatus(message, success = false) {
-    elements.loginStatus.textContent = message;
-    elements.loginStatus.style.color = success ? "#39804a" : "#c0392b";
-}
-
-function setLoginBusy(busy, message = "Please wait...") {
-    elements.loginSubmit.disabled = busy;
-    elements.loginSubmit.textContent = busy ? message : "Log in";
-}
-
-function openLoginModal() {
-    elements.modal.classList.add("visible");
-    elements.loginForm.reset();
-    elements.email.readOnly = false;
-    elements.password.autocomplete = "current-password";
-    elements.loginHeading.textContent = "Log in";
-    elements.loginDescription.textContent = "Enter your email and password.";
-    elements.loginSubmit.textContent = "Log in";
-    elements.loginSubmit.disabled = false;
-    elements.email.focus();
-}
-
-function closeLoginModal() {
-    if (completingEmailLink || passwordSetupUser) {
-        return;
-    }
-
-    elements.modal.classList.remove("visible");
-    elements.loginStatus.textContent = "";
-    elements.loginForm.reset();
-    elements.email.readOnly = false;
-    elements.password.autocomplete = "current-password";
-}
-
-document.getElementById("closeLogin").addEventListener("click", closeLoginModal);
-
-elements.modal.addEventListener("click", event => {
-    if (event.target === elements.modal) {
-        closeLoginModal();
-    }
-});
-
-elements.loginButton.addEventListener("click", () => {
-    if (currentUser) {
-        auth.signOut().catch(error => {
-            alert("Log out failed: " + error.message);
-        });
-    } else {
-        openLoginModal();
-    }
-});
-
-function getAuthErrorMessage(error) {
-    const messages = {
-        "auth/invalid-email": "Enter a valid email address.",
-        "auth/weak-password": "Use a password with at least 6 characters.",
-        "auth/too-many-requests": "Too many attempts. Please try again later.",
-        "auth/network-request-failed": "Network error. Check your connection and try again.",
-        "auth/operation-not-allowed": "Enable Email/Password and Email link sign-in in Firebase Authentication.",
-        "auth/expired-action-code": "This verification link has expired. Please start again.",
-        "auth/invalid-action-code": "This verification link is invalid or has already been used.",
-        "auth/email-already-in-use": "This email already has an account. Log in instead.",
-        "auth/wrong-password": "Wrong password.",
-        "auth/user-not-found": "This email is not registered.",
-        "auth/credential-already-in-use": "This email already has an account. Log in instead."
-    };
-
-    return messages[error.code] || error.message || "Something went wrong.";
-}
-
-function getContinueUrl() {
-    const url = new URL(window.location.href);
-    url.search = "";
-    url.hash = "";
-    return url.toString();
-}
-
-function clearPendingRegistration() {
-    localStorage.removeItem(PENDING_EMAIL_KEY);
-    localStorage.removeItem(PENDING_PASSWORD_KEY);
-}
-
-async function sendRegistrationLink(email, password) {
-    localStorage.setItem(PENDING_EMAIL_KEY, email);
-    localStorage.setItem(PENDING_PASSWORD_KEY, password);
-
-    const actionCodeSettings = {
-        url: getContinueUrl(),
-        handleCodeInApp: true
-    };
-
-    try {
-        await auth.sendSignInLinkToEmail(email, actionCodeSettings);
-
-        showLoginStatus(
-            "Verification link sent. Check your inbox and spam folder. Your account will be created after you click the link.",
-            true
+        localStorage.setItem(
+          "darkMode",
+          document.body.classList.contains("dark-mode")
+            ? "enabled"
+            : "disabled",
         );
-    } catch (error) {
-        clearPendingRegistration();
-        throw error;
-    }
-}
+      }
 
-async function login(email, password) {
-    try {
-        const methods = await auth.fetchSignInMethodsForEmail(email);
+      document
+        .getElementById("mobileThemeBtn")
+        .addEventListener("click", toggleTheme);
 
-        if (methods.includes("password")) {
-            try {
-                const result = await auth.signInWithEmailAndPassword(email, password);
-
-                await result.user.reload();
-
-                if (!result.user.emailVerified) {
-                    await auth.signOut();
-                    showLoginStatus(
-                        "This account's email is not verified. Please complete email verification before logging in."
-                    );
-                    return;
-                }
-
-                closeLoginModal();
-                return;
-            } catch (error) {
-                if (
-                    error.code === "auth/wrong-password" ||
-                    error.code === "auth/invalid-credential"
-                ) {
-                    showLoginStatus("Wrong password.");
-                    return;
-                }
-
-                throw error;
-            }
-        }
-
-        if (methods.length > 0) {
-            showLoginStatus("This email uses a different sign-in method.");
-            return;
-        }
-
-        await sendRegistrationLink(email, password);
-    } catch (error) {
+      document.addEventListener("keydown", (event) => {
         if (
-            error.code === "auth/wrong-password" ||
-            error.code === "auth/invalid-credential"
+          !["INPUT", "TEXTAREA"].includes(event.target.tagName) &&
+          event.key.toLowerCase() === "m"
         ) {
-            showLoginStatus("Wrong password.");
-            return;
+          toggleTheme();
         }
 
-        showLoginStatus(getAuthErrorMessage(error));
-    }
-}
-
-elements.loginForm.addEventListener("submit", async event => {
-    event.preventDefault();
-
-    const email = elements.email.value.trim().toLowerCase();
-    const password = elements.password.value;
-
-    if (!email) {
-        showLoginStatus("Enter a valid email address.");
-        return;
-    }
-
-    if (password.length < 6) {
-        showLoginStatus("Use a password with at least 6 characters.");
-        return;
-    }
-
-    showLoginStatus("");
-    setLoginBusy(true);
-
-    try {
-        if (passwordSetupUser) {
-            await finishPasswordSetup(email, password);
-        } else {
-            await login(email, password);
+        if (
+          event.key === "Escape" &&
+          elements.modal.classList.contains("visible")
+        ) {
+          closeLoginModal();
         }
-    } catch (error) {
-        showLoginStatus(getAuthErrorMessage(error));
-    } finally {
-        setLoginBusy(false);
-    }
-});
+      });
 
-async function finishPasswordSetup(email, password) {
-    if (password.length < 6) {
-        showLoginStatus("Use a password with at least 6 characters.");
-        return;
-    }
+      function showLoginStatus(message, success = false) {
+        elements.loginStatus.textContent = message;
+        elements.loginStatus.style.color = success ? "#39804a" : "#c0392b";
+      }
 
-    try {
-        const credential = firebase.auth.EmailAuthProvider.credential(email, password);
-        const result = await passwordSetupUser.linkWithCredential(credential);
+      function setLoginBusy(busy, message = "Please wait...") {
+        elements.loginSubmit.disabled = busy;
+        elements.loginSubmit.textContent = busy ? message : "Log in";
+      }
 
-        await result.user.reload();
-
-        passwordSetupUser = null;
-        completingEmailLink = false;
-        clearPendingRegistration();
-        cleanEmailLinkUrl();
-
-        elements.modal.classList.remove("visible");
-        elements.loginForm.reset();
-        elements.email.readOnly = false;
-
-        activateUser(auth.currentUser);
-    } catch (error) {
-        showLoginStatus(getAuthErrorMessage(error));
-    }
-}
-
-function cleanEmailLinkUrl() {
-    const cleanUrl = window.location.origin + window.location.pathname;
-    window.history.replaceState({}, document.title, cleanUrl);
-}
-
-async function completeEmailLink() {
-    if (!auth.isSignInWithEmailLink(window.location.href)) {
-        return;
-    }
-
-    completingEmailLink = true;
-
-    let email = localStorage.getItem(PENDING_EMAIL_KEY);
-    let password = localStorage.getItem(PENDING_PASSWORD_KEY);
-
-    if (!email) {
-        email = window.prompt("Enter the email address where you received the link:");
-    }
-
-    if (!email) {
-        completingEmailLink = false;
-        openLoginModal();
-        showLoginStatus("Enter the email address that received the link.");
-        return;
-    }
-
-    email = email.trim().toLowerCase();
-
-    try {
-        const result = await auth.signInWithEmailLink(email, window.location.href);
-
-        const hasPasswordProvider = result.user.providerData.some(
-            provider => provider.providerId === "password"
-        );
-
-        if (hasPasswordProvider) {
-            await auth.signOut();
-            completingEmailLink = false;
-            clearPendingRegistration();
-            cleanEmailLinkUrl();
-            openLoginModal();
-
-            showLoginStatus(
-                "This email already has an account. Log in with your password."
-            );
-
-            return;
-        }
-
-        if (password && password.length >= 6) {
-            const credential = firebase.auth.EmailAuthProvider.credential(email, password);
-            const linkedResult = await result.user.linkWithCredential(credential);
-
-            await linkedResult.user.reload();
-
-            completingEmailLink = false;
-            clearPendingRegistration();
-            cleanEmailLinkUrl();
-
-            elements.modal.classList.remove("visible");
-            activateUser(auth.currentUser);
-            return;
-        }
-
-        passwordSetupUser = result.user;
-
+      function openLoginModal() {
         elements.modal.classList.add("visible");
         elements.loginForm.reset();
-
+        elements.email.readOnly = false;
+        elements.password.autocomplete = "current-password";
         elements.loginHeading.textContent = "Log in";
-        elements.loginDescription.textContent = "Email verified. Enter the password you chose.";
-        elements.email.value = email;
-        elements.email.readOnly = true;
-        elements.password.value = "";
-        elements.password.autocomplete = "new-password";
-        elements.loginSubmit.textContent = "Finish account";
+        elements.loginDescription.textContent =
+          "Enter your email and password.";
+        elements.loginSubmit.textContent = "Log in";
         elements.loginSubmit.disabled = false;
+        elements.email.focus();
+      }
 
-        showLoginStatus(
-            "Your email is verified. Enter the password you chose when you requested the link.",
-            true
+      function closeLoginModal() {
+        elements.modal.classList.remove("visible");
+        elements.loginStatus.textContent = "";
+        elements.loginForm.reset();
+        elements.email.readOnly = false;
+        elements.password.autocomplete = "current-password";
+      }
+
+      document
+        .getElementById("closeLogin")
+        .addEventListener("click", closeLoginModal);
+
+      elements.modal.addEventListener("click", (event) => {
+        if (event.target === elements.modal) {
+          closeLoginModal();
+        }
+      });
+
+      elements.loginButton.addEventListener("click", () => {
+        if (currentUser) {
+          auth.signOut().catch((error) => {
+            alert("Log out failed: " + error.message);
+          });
+        } else {
+          openLoginModal();
+        }
+      });
+
+      function getAuthErrorMessage(error) {
+        const messages = {
+          "auth/invalid-email": "Enter a valid email address.",
+          "auth/weak-password": "Use a password with at least 6 characters.",
+          "auth/too-many-requests":
+            "Too many attempts. Please try again later.",
+          "auth/quota-exceeded":
+            "Firebase's daily email quota has been reached. Please try again after the quota resets.",
+          "auth/network-request-failed":
+            "Network error. Check your connection and try again.",
+          "auth/operation-not-allowed":
+            "Enable Email/Password sign-in in Firebase Authentication.",
+          "auth/email-already-in-use": "Wrong password.",
+          "auth/wrong-password": "Wrong password.",
+          "auth/user-not-found": "This email is not registered.",
+          "auth/credential-already-in-use":
+            "This email already has an account.",
+        };
+
+        return messages[error.code] || error.message || "Something went wrong.";
+      }
+
+      function getContinueUrl() {
+        const url = new URL(window.location.href);
+        url.search = "";
+        url.hash = "";
+        return url.toString();
+      }
+
+      async function registerNewAccount(email, password) {
+        const result = await auth.createUserWithEmailAndPassword(
+          email,
+          password,
         );
 
-        completingEmailLink = false;
-    } catch (error) {
-        completingEmailLink = false;
-        cleanEmailLinkUrl();
-        openLoginModal();
-        showLoginStatus(getAuthErrorMessage(error));
-    }
-}
+        try {
+          await result.user.sendEmailVerification({
+            url: getContinueUrl(),
+          });
 
-function activateUser(user) {
-    if (!user || !user.emailVerified) {
-        return;
-    }
+          showLoginStatus(
+            "Verification email sent. Check your inbox and spam folder, then verify your email before logging in.",
+            true,
+          );
+        } catch (error) {
+          await auth.signOut();
+          throw error;
+        }
 
-    const hasPasswordProvider = user.providerData.some(
-        provider => provider.providerId === "password"
-    );
+        await auth.signOut();
+      }
 
-    if (!hasPasswordProvider) {
-        return;
-    }
+      async function login(email, password) {
+        try {
+          const result = await auth.signInWithEmailAndPassword(email, password);
+          await result.user.reload();
 
-    currentUser = user;
-    elements.userName.textContent = user.email || "";
-    elements.loginButton.textContent = "Log out";
+          if (!result.user.emailVerified) {
+            try {
+              await result.user.sendEmailVerification({
+                url: getContinueUrl(),
+              });
+              showLoginStatus(
+                "Your email is not verified yet. We've sent you another verification email. Check your inbox and spam folder.",
+              );
+            } finally {
+              await auth.signOut();
+            }
+            return;
+          }
 
-    loadNotes();
-}
+          closeLoginModal();
+        } catch (error) {
+          if (
+            error.code === "auth/wrong-password" ||
+            error.code === "auth/invalid-credential" ||
+            error.code === "auth/user-not-found"
+          ) {
+            try {
+              await registerNewAccount(email, password);
+            } catch (registrationError) {
+              if (registrationError.code === "auth/email-already-in-use") {
+                showLoginStatus("Wrong password.");
+                return;
+              }
+              throw registrationError;
+            }
+            return;
+          }
 
-function deactivateUser() {
-    currentUser = null;
+          showLoginStatus(getAuthErrorMessage(error));
+        }
+      }
 
-    elements.userName.textContent = "";
-    elements.loginButton.textContent = "Log in";
-    elements.list.innerHTML = "";
+      elements.loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-    notes = [];
+        const email = elements.email.value.trim().toLowerCase();
+        const password = elements.password.value;
 
-    if (notesListener) {
-        notesListener();
-        notesListener = null;
-    }
-}
+        if (!email) {
+          showLoginStatus("Enter a valid email address.");
+          return;
+        }
 
-elements.saveButton.addEventListener("click", async () => {
-    if (!currentUser) {
-        openLoginModal();
-        return;
-    }
+        if (password.length < 6) {
+          showLoginStatus("Use a password with at least 6 characters.");
+          return;
+        }
 
-    const title = elements.title.value.trim();
-    const text = elements.input.value.trim();
+        showLoginStatus("");
+        setLoginBusy(true, "Please wait...");
 
-    if (!title && !text) {
-        return;
-    }
+        try {
+          await login(email, password);
+        } catch (error) {
+          showLoginStatus(getAuthErrorMessage(error));
+        } finally {
+          setLoginBusy(false);
+        }
+      });
 
-    elements.saveButton.disabled = true;
+      function activateUser(user) {
+        if (!user || !user.emailVerified) {
+          return;
+        }
 
-    try {
-        const timestamp = Date.now();
+        const hasPasswordProvider = user.providerData.some(
+          (provider) => provider.providerId === "password",
+        );
 
-        const noteData = {
+        if (!hasPasswordProvider) {
+          return;
+        }
+
+        currentUser = user;
+        elements.userName.textContent = user.email || "";
+        elements.loginButton.textContent = "Log out";
+
+        loadNotes();
+      }
+
+      function deactivateUser() {
+        currentUser = null;
+
+        elements.userName.textContent = "";
+        elements.loginButton.textContent = "Log in";
+        elements.list.innerHTML = "";
+
+        notes = [];
+
+        if (notesListener) {
+          notesListener();
+          notesListener = null;
+        }
+      }
+
+      elements.saveButton.addEventListener("click", async () => {
+        if (!currentUser) {
+          openLoginModal();
+          return;
+        }
+
+        const title = elements.title.value.trim();
+        const text = elements.input.value.trim();
+
+        if (!title && !text) {
+          return;
+        }
+
+        elements.saveButton.disabled = true;
+
+        try {
+          const timestamp = Date.now();
+
+          const noteData = {
             uid: currentUser.uid,
             title,
             text,
             time: timestamp,
-            updatedAt: timestamp
-        };
+            updatedAt: timestamp,
+          };
 
-        if (editingId) {
+          if (editingId) {
             await db.collection("notes").doc(editingId).update(noteData);
-        } else {
+          } else {
             await db.collection("notes").add(noteData);
+          }
+
+          resetEditor();
+        } catch (error) {
+          alert("Could not save note: " + error.message);
+        } finally {
+          elements.saveButton.disabled = false;
         }
+      });
 
-        resetEditor();
-    } catch (error) {
-        alert("Could not save note: " + error.message);
-    } finally {
-        elements.saveButton.disabled = false;
-    }
-});
+      function resetEditor() {
+        editingId = null;
+        elements.title.value = "";
+        elements.input.value = "";
+        elements.saveButton.textContent = "Create note";
+        elements.cancelEdit.style.display = "none";
+      }
 
-function resetEditor() {
-    editingId = null;
-    elements.title.value = "";
-    elements.input.value = "";
-    elements.saveButton.textContent = "Create note";
-    elements.cancelEdit.style.display = "none";
-}
+      elements.cancelEdit.addEventListener("click", resetEditor);
+      elements.search.addEventListener("input", renderNotes);
 
-elements.cancelEdit.addEventListener("click", resetEditor);
-elements.search.addEventListener("input", renderNotes);
+      function renderNotes() {
+        elements.list.innerHTML = "";
 
-function renderNotes() {
-    elements.list.innerHTML = "";
+        const searchTerms = elements.search.value
+          .trim()
+          .toLocaleLowerCase()
+          .split(/\s+/)
+          .filter(Boolean);
 
-    const searchTerms = elements.search.value
-        .trim()
-        .toLocaleLowerCase()
-        .split(/\s+/)
-        .filter(Boolean);
+        const filteredNotes = notes.filter((note) => {
+          const title = (note.title || "").toLocaleLowerCase();
+          const text = (note.text || "").toLocaleLowerCase();
 
-    const filteredNotes = notes.filter(note => {
-        const title = (note.title || "").toLocaleLowerCase();
-        const text = (note.text || "").toLocaleLowerCase();
+          return searchTerms.every(
+            (term) => title.includes(term) || text.includes(term),
+          );
+        });
 
-        return searchTerms.every(
-            term => title.includes(term) || text.includes(term)
-        );
-    });
+        filteredNotes.forEach((note) => {
+          const card = document.createElement("li");
+          card.className = "note";
 
-    filteredNotes.forEach(note => {
-        const card = document.createElement("li");
-        card.className = "note";
-
-        if (note.title) {
+          if (note.title) {
             const heading = document.createElement("h3");
             heading.textContent = note.title;
             card.appendChild(heading);
-        }
+          }
 
-        const content = document.createElement("p");
-        content.textContent = note.text || "";
-        card.appendChild(content);
+          const content = document.createElement("p");
+          content.textContent = note.text || "";
+          card.appendChild(content);
 
-        const actions = document.createElement("div");
-        actions.className = "actions";
+          const actions = document.createElement("div");
+          actions.className = "actions";
 
-        const editButton = document.createElement("button");
-        editButton.type = "button";
-        editButton.textContent = "Edit";
+          const editButton = document.createElement("button");
+          editButton.type = "button";
+          editButton.textContent = "Edit";
 
-        editButton.addEventListener("click", () => {
+          editButton.addEventListener("click", () => {
             editingId = note.id;
             elements.title.value = note.title || "";
             elements.input.value = note.text || "";
@@ -1002,90 +948,97 @@ function renderNotes() {
             elements.cancelEdit.style.display = "inline-block";
 
             window.scrollTo({
-                top: 0,
-                behavior: "smooth"
+              top: 0,
+              behavior: "smooth",
             });
-        });
+          });
 
-        const deleteButton = document.createElement("button");
-        deleteButton.type = "button";
-        deleteButton.textContent = "Delete";
+          const deleteButton = document.createElement("button");
+          deleteButton.type = "button";
+          deleteButton.textContent = "Delete";
 
-        deleteButton.addEventListener("click", async () => {
+          deleteButton.addEventListener("click", async () => {
             if (!confirm("Delete this note permanently?")) {
-                return;
+              return;
             }
 
             try {
-                await db.collection("notes").doc(note.id).delete();
+              await db.collection("notes").doc(note.id).delete();
             } catch (error) {
-                alert("Could not delete note: " + error.message);
+              alert("Could not delete note: " + error.message);
             }
+          });
+
+          actions.append(editButton, deleteButton);
+          card.appendChild(actions);
+          elements.list.appendChild(card);
         });
+      }
 
-        actions.append(editButton, deleteButton);
-        card.appendChild(actions);
-        elements.list.appendChild(card);
-    });
-}
+      function loadNotes() {
+        if (notesListener) {
+          notesListener();
+          notesListener = null;
+        }
 
-function loadNotes() {
-    if (notesListener) {
-        notesListener();
-        notesListener = null;
-    }
+        notes = [];
+        renderNotes();
 
-    notes = [];
-    renderNotes();
+        if (!currentUser) {
+          return;
+        }
 
-    if (!currentUser) {
-        return;
-    }
+        notesListener = db
+          .collection("notes")
+          .where("uid", "==", currentUser.uid)
+          .onSnapshot(
+            (snapshot) => {
+              notes = [];
 
-    notesListener = db.collection("notes")
-        .where("uid", "==", currentUser.uid)
-        .onSnapshot(snapshot => {
-            notes = [];
-
-            snapshot.forEach(document => {
+              snapshot.forEach((document) => {
                 notes.push({
-                    id: document.id,
-                    ...document.data()
+                  id: document.id,
+                  ...document.data(),
                 });
-            });
+              });
 
-            notes.sort((a, b) => {
-                return (b.updatedAt || b.time || 0) - (a.updatedAt || a.time || 0);
-            });
+              notes.sort((a, b) => {
+                return (
+                  (b.updatedAt || b.time || 0) - (a.updatedAt || a.time || 0)
+                );
+              });
 
-            renderNotes();
-        }, error => {
-            alert("Could not load notes: " + error.message);
-        });
-}
+              renderNotes();
+            },
+            (error) => {
+              alert("Could not load notes: " + error.message);
+            },
+          );
+      }
 
-auth.onAuthStateChanged(user => {
-    if (completingEmailLink || passwordSetupUser) {
-        return;
-    }
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          try {
+            await user.reload();
+            user = auth.currentUser;
+          } catch (error) {
+            console.error("Could not refresh authentication state:", error);
+          }
+        }
 
-    if (
-        user &&
-        user.emailVerified &&
-        user.providerData.some(provider => provider.providerId === "password")
-    ) {
-        activateUser(user);
-        return;
-    }
+        if (
+          user &&
+          user.emailVerified &&
+          user.providerData.some(
+            (provider) => provider.providerId === "password",
+          )
+        ) {
+          activateUser(user);
+          return;
+        }
 
-    deactivateUser();
-});
-
-completeEmailLink().catch(error => {
-    completingEmailLink = false;
-    console.error("Email link completion failed:", error);
-});
-</script>
-
-</body>
+        deactivateUser();
+      });
+    </script>
+  </body>
 </html>
