@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -351,22 +352,6 @@ footer {
     font-weight: 600;
 }
 
-#switchAuthMode {
-    display: block;
-    width: 100%;
-    margin-top: 13px;
-    padding: 5px;
-    border: 0;
-    background: transparent;
-    color: var(--muted);
-    font-size: 13px;
-}
-
-#switchAuthMode:hover {
-    color: var(--text);
-    text-decoration: underline;
-}
-
 #loginStatus {
     margin-top: 12px;
     color: #c0392b;
@@ -489,15 +474,13 @@ footer {
     <div id="loginBox">
         <button id="closeLogin" type="button" aria-label="Close login">×</button>
         <h2 id="loginHeading">Log in</h2>
-        <p id="loginDescription">Use your email and password.</p>
+        <p id="loginDescription">Enter your email and password.</p>
 
         <form id="loginForm">
             <input type="email" id="emailInput" placeholder="Email address" autocomplete="email" required>
             <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password" minlength="6" required>
             <button type="submit" id="loginSubmit">Log in</button>
         </form>
-
-        <button id="switchAuthMode" type="button">Create an account</button>
 
         <div id="loginStatus" role="status" aria-live="polite"></div>
     </div>
@@ -537,20 +520,19 @@ const elements = {
     loginStatus: document.getElementById("loginStatus"),
     loginHeading: document.getElementById("loginHeading"),
     loginDescription: document.getElementById("loginDescription"),
-    switchMode: document.getElementById("switchAuthMode"),
     saveButton: document.getElementById("saveBtn"),
     cancelEdit: document.getElementById("cancelEditBtn")
 };
 
 const PENDING_EMAIL_KEY = "notesPendingEmail";
+const PENDING_PASSWORD_KEY = "notesPendingPassword";
 
 let currentUser = null;
 let notesListener = null;
 let notes = [];
 let editingId = null;
-let passwordSetupUser = null;
 let completingEmailLink = false;
-let authMode = "login";
+let passwordSetupUser = null;
 
 if (localStorage.getItem("darkMode") === "enabled") {
     document.body.classList.add("dark-mode");
@@ -585,48 +567,20 @@ function showLoginStatus(message, success = false) {
     elements.loginStatus.style.color = success ? "#39804a" : "#c0392b";
 }
 
-function setAuthMode(mode) {
-    authMode = mode;
-    elements.loginStatus.textContent = "";
-    elements.password.value = "";
-
-    if (mode === "signup") {
-        elements.loginHeading.textContent = "Create an account";
-        elements.loginDescription.textContent = "Verify your email before creating your account.";
-        elements.password.style.display = "none";
-        elements.password.required = false;
-        elements.loginSubmit.textContent = "Send verification link";
-        elements.switchMode.textContent = "Already have an account? Log in";
-    } else {
-        elements.loginHeading.textContent = "Log in";
-        elements.loginDescription.textContent = "Use your email and password.";
-        elements.password.style.display = "block";
-        elements.password.required = true;
-        elements.password.autocomplete = "current-password";
-        elements.loginSubmit.textContent = "Log in";
-        elements.switchMode.textContent = "Create an account";
-    }
-}
-
 function setLoginBusy(busy, message = "Please wait...") {
     elements.loginSubmit.disabled = busy;
-
-    if (busy) {
-        elements.loginSubmit.textContent = message;
-    } else if (passwordSetupUser) {
-        elements.loginSubmit.textContent = "Set password";
-    } else {
-        elements.loginSubmit.textContent = authMode === "signup"
-            ? "Send verification link"
-            : "Log in";
-    }
+    elements.loginSubmit.textContent = busy ? message : "Log in";
 }
 
 function openLoginModal() {
     elements.modal.classList.add("visible");
     elements.loginForm.reset();
     elements.email.readOnly = false;
-    setAuthMode("login");
+    elements.password.autocomplete = "current-password";
+    elements.loginHeading.textContent = "Log in";
+    elements.loginDescription.textContent = "Enter your email and password.";
+    elements.loginSubmit.textContent = "Log in";
+    elements.loginSubmit.disabled = false;
     elements.email.focus();
 }
 
@@ -639,8 +593,7 @@ function closeLoginModal() {
     elements.loginStatus.textContent = "";
     elements.loginForm.reset();
     elements.email.readOnly = false;
-    elements.switchMode.style.display = "block";
-    setAuthMode("login");
+    elements.password.autocomplete = "current-password";
 }
 
 document.getElementById("closeLogin").addEventListener("click", closeLoginModal);
@@ -649,14 +602,6 @@ elements.modal.addEventListener("click", event => {
     if (event.target === elements.modal) {
         closeLoginModal();
     }
-});
-
-elements.switchMode.addEventListener("click", () => {
-    if (passwordSetupUser) {
-        return;
-    }
-
-    setAuthMode(authMode === "login" ? "signup" : "login");
 });
 
 elements.loginButton.addEventListener("click", () => {
@@ -676,13 +621,12 @@ function getAuthErrorMessage(error) {
         "auth/too-many-requests": "Too many attempts. Please try again later.",
         "auth/network-request-failed": "Network error. Check your connection and try again.",
         "auth/operation-not-allowed": "Enable Email/Password and Email link sign-in in Firebase Authentication.",
-        "auth/expired-action-code": "This verification link has expired. Please request a new one.",
+        "auth/expired-action-code": "This verification link has expired. Please start again.",
         "auth/invalid-action-code": "This verification link is invalid or has already been used.",
-        "auth/email-already-in-use": "An account with this email already exists. Please log in.",
-        "auth/wrong-password": "Incorrect email or password.",
-        "auth/invalid-credential": "Incorrect email or password.",
-        "auth/user-not-found": "No account exists with this email. Create an account first.",
-        "auth/credential-already-in-use": "This email already has an account. Please log in."
+        "auth/email-already-in-use": "This email already has an account. Log in instead.",
+        "auth/wrong-password": "Wrong password.",
+        "auth/user-not-found": "This email is not registered.",
+        "auth/credential-already-in-use": "This email already has an account. Log in instead."
     };
 
     return messages[error.code] || error.message || "Something went wrong.";
@@ -695,42 +639,83 @@ function getContinueUrl() {
     return url.toString();
 }
 
-async function sendVerificationLink(email) {
+function clearPendingRegistration() {
+    localStorage.removeItem(PENDING_EMAIL_KEY);
+    localStorage.removeItem(PENDING_PASSWORD_KEY);
+}
+
+async function sendRegistrationLink(email, password) {
+    localStorage.setItem(PENDING_EMAIL_KEY, email);
+    localStorage.setItem(PENDING_PASSWORD_KEY, password);
+
     const actionCodeSettings = {
         url: getContinueUrl(),
         handleCodeInApp: true
     };
 
-    await auth.sendSignInLinkToEmail(email, actionCodeSettings);
+    try {
+        await auth.sendSignInLinkToEmail(email, actionCodeSettings);
 
-    localStorage.setItem(PENDING_EMAIL_KEY, email);
-
-    showLoginStatus(
-        "Verification link sent. Check your inbox and spam or junk folder. Your account will only be created after you click the link.",
-        true
-    );
+        showLoginStatus(
+            "Verification link sent. Check your inbox and spam folder. Your account will be created after you click the link.",
+            true
+        );
+    } catch (error) {
+        clearPendingRegistration();
+        throw error;
+    }
 }
 
 async function login(email, password) {
-    const result = await auth.signInWithEmailAndPassword(email, password);
+    try {
+        const methods = await auth.fetchSignInMethodsForEmail(email);
 
-    await result.user.reload();
+        if (methods.includes("password")) {
+            try {
+                const result = await auth.signInWithEmailAndPassword(email, password);
 
-    if (!auth.currentUser.emailVerified) {
-        await auth.currentUser.sendEmailVerification({
-            url: getContinueUrl()
-        });
+                await result.user.reload();
 
-        await auth.signOut();
+                if (!result.user.emailVerified) {
+                    await auth.signOut();
+                    showLoginStatus(
+                        "This account's email is not verified. Please complete email verification before logging in."
+                    );
+                    return;
+                }
 
-        showLoginStatus(
-            "Your email has not been verified. A verification email has been sent. Check your inbox and spam or junk folder."
-        );
+                closeLoginModal();
+                return;
+            } catch (error) {
+                if (
+                    error.code === "auth/wrong-password" ||
+                    error.code === "auth/invalid-credential"
+                ) {
+                    showLoginStatus("Wrong password.");
+                    return;
+                }
 
-        return;
+                throw error;
+            }
+        }
+
+        if (methods.length > 0) {
+            showLoginStatus("This email uses a different sign-in method.");
+            return;
+        }
+
+        await sendRegistrationLink(email, password);
+    } catch (error) {
+        if (
+            error.code === "auth/wrong-password" ||
+            error.code === "auth/invalid-credential"
+        ) {
+            showLoginStatus("Wrong password.");
+            return;
+        }
+
+        showLoginStatus(getAuthErrorMessage(error));
     }
-
-    closeLoginModal();
 }
 
 elements.loginForm.addEventListener("submit", async event => {
@@ -744,13 +729,8 @@ elements.loginForm.addEventListener("submit", async event => {
         return;
     }
 
-    if (passwordSetupUser) {
-        await finishPasswordSetup(email, password);
-        return;
-    }
-
-    if (authMode === "login" && password.length < 6) {
-        showLoginStatus("Enter your password.");
+    if (password.length < 6) {
+        showLoginStatus("Use a password with at least 6 characters.");
         return;
     }
 
@@ -758,8 +738,8 @@ elements.loginForm.addEventListener("submit", async event => {
     setLoginBusy(true);
 
     try {
-        if (authMode === "signup") {
-            await sendVerificationLink(email);
+        if (passwordSetupUser) {
+            await finishPasswordSetup(email, password);
         } else {
             await login(email, password);
         }
@@ -776,36 +756,28 @@ async function finishPasswordSetup(email, password) {
         return;
     }
 
-    setLoginBusy(true, "Setting password...");
-
     try {
         const credential = firebase.auth.EmailAuthProvider.credential(email, password);
-
         const result = await passwordSetupUser.linkWithCredential(credential);
 
         await result.user.reload();
 
         passwordSetupUser = null;
         completingEmailLink = false;
-
-        finishEmailLinkCleanup();
+        clearPendingRegistration();
+        cleanEmailLinkUrl();
 
         elements.modal.classList.remove("visible");
         elements.loginForm.reset();
         elements.email.readOnly = false;
-        elements.switchMode.style.display = "block";
 
         activateUser(auth.currentUser);
     } catch (error) {
         showLoginStatus(getAuthErrorMessage(error));
-    } finally {
-        setLoginBusy(false);
     }
 }
 
-function finishEmailLinkCleanup() {
-    localStorage.removeItem(PENDING_EMAIL_KEY);
-
+function cleanEmailLinkUrl() {
     const cleanUrl = window.location.origin + window.location.pathname;
     window.history.replaceState({}, document.title, cleanUrl);
 }
@@ -818,6 +790,7 @@ async function completeEmailLink() {
     completingEmailLink = true;
 
     let email = localStorage.getItem(PENDING_EMAIL_KEY);
+    let password = localStorage.getItem(PENDING_PASSWORD_KEY);
 
     if (!email) {
         email = window.prompt("Enter the email address where you received the link:");
@@ -841,15 +814,30 @@ async function completeEmailLink() {
 
         if (hasPasswordProvider) {
             await auth.signOut();
-
             completingEmailLink = false;
-            finishEmailLinkCleanup();
+            clearPendingRegistration();
+            cleanEmailLinkUrl();
             openLoginModal();
 
             showLoginStatus(
-                "An account with this email already exists. Log in using your password."
+                "This email already has an account. Log in with your password."
             );
 
+            return;
+        }
+
+        if (password && password.length >= 6) {
+            const credential = firebase.auth.EmailAuthProvider.credential(email, password);
+            const linkedResult = await result.user.linkWithCredential(credential);
+
+            await linkedResult.user.reload();
+
+            completingEmailLink = false;
+            clearPendingRegistration();
+            cleanEmailLinkUrl();
+
+            elements.modal.classList.remove("visible");
+            activateUser(auth.currentUser);
             return;
         }
 
@@ -858,25 +846,24 @@ async function completeEmailLink() {
         elements.modal.classList.add("visible");
         elements.loginForm.reset();
 
-        elements.loginHeading.textContent = "Set your password";
-        elements.loginDescription.textContent = "Your email is verified. Choose a password.";
+        elements.loginHeading.textContent = "Log in";
+        elements.loginDescription.textContent = "Email verified. Enter the password you chose.";
         elements.email.value = email;
         elements.email.readOnly = true;
-        elements.password.style.display = "block";
-        elements.password.required = true;
+        elements.password.value = "";
         elements.password.autocomplete = "new-password";
-        elements.loginSubmit.textContent = "Set password";
-        elements.switchMode.style.display = "none";
+        elements.loginSubmit.textContent = "Finish account";
+        elements.loginSubmit.disabled = false;
 
         showLoginStatus(
-            "Email verified. Your account has now been created. Set your password to finish.",
+            "Your email is verified. Enter the password you chose when you requested the link.",
             true
         );
 
         completingEmailLink = false;
     } catch (error) {
         completingEmailLink = false;
-        finishEmailLinkCleanup();
+        cleanEmailLinkUrl();
         openLoginModal();
         showLoginStatus(getAuthErrorMessage(error));
     }
@@ -1078,21 +1065,16 @@ function loadNotes() {
 }
 
 auth.onAuthStateChanged(user => {
+    if (completingEmailLink || passwordSetupUser) {
+        return;
+    }
+
     if (
         user &&
         user.emailVerified &&
         user.providerData.some(provider => provider.providerId === "password")
     ) {
         activateUser(user);
-        return;
-    }
-
-    if (user && completingEmailLink) {
-        return;
-    }
-
-    if (passwordSetupUser) {
-        deactivateUser();
         return;
     }
 
